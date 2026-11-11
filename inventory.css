@@ -1,0 +1,256 @@
+/* Inventory inherits the site's charcoal / chalk tokens in every display theme. Red marks harm and destructive actions only. */
+.inventory,.inv-pop,.comp-pack{
+  --inv-bg:var(--panel);--inv-raised:var(--panel2);--inv-deep:var(--shell);--inv-line:var(--line);
+  --inv-heading:var(--text);--inv-ink:var(--text);--inv-muted:var(--muted);
+  color:var(--inv-ink);font-size:1rem;
+}
+.inventory{container:inv/inline-size}
+.inventory a{color:inherit}
+.inv-eyebrow{display:block;font-size:max(14px,.78rem);font-weight:700;letter-spacing:.1em;color:var(--inv-heading)}
+
+/* Shell: panels in the middle, the loot drawer at the right edge, in the flow so it never covers anything. */
+.inv-shell{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:1rem;position:relative}
+.inv-main{container:invmain/inline-size;min-width:0}
+.inv-layout{--inv-cell:clamp(44px,calc((100cqw - 9rem - 4px)/10),88px);--inv-pw:calc(5*var(--inv-cell) + 4*.5rem + 2rem + 2px);
+  display:grid;grid-template-columns:repeat(2,minmax(0,var(--inv-pw)));justify-content:center;column-gap:1rem;row-gap:0;align-items:stretch}
+.inv-bag-tools{grid-column:1/-1;grid-row:1;display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;min-width:0}
+.inv-equipment,.inv-backpack{grid-row:2/span 3;display:grid;grid-template-rows:subgrid;row-gap:0}
+.inv-equipment{grid-column:1}.inv-backpack{grid-column:2}
+.inv-window{min-width:0;background:var(--inv-bg);border:1px solid var(--inv-line);border-radius:var(--r);overflow:hidden}
+.inv-window-title{display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:3rem;padding:.55rem 1rem;border-bottom:1px solid var(--inv-line)}
+.inv-window-title h2{font:700 max(14px,.8rem)/1.3 var(--body);color:var(--inv-heading);letter-spacing:.09em;text-transform:uppercase;margin:0}
+.inv-window-title>span{font-size:max(14px,.78rem);color:var(--inv-muted);text-align:right}
+.inv-backpack .inv-window-title>span{margin-right:auto}
+.inv-ready-row,.inv-belt-row,.inv-pack-row{padding:.6rem 1rem;border-bottom:1px solid color-mix(in srgb,var(--inv-line) 70%,transparent);min-width:0}
+.inv-ready-row{display:grid;grid-template-columns:repeat(5,var(--inv-cell));gap:.5rem;justify-content:center}
+.inv-hands-group{grid-column:span 2}.inv-magic-group{grid-column:span 3}
+.inv-ready-group{min-width:0;display:flex;flex-direction:column}
+.inv-subheading{display:flex;align-items:center;justify-content:space-between;gap:.4rem;min-height:1.5rem;margin-bottom:.4rem}
+.inv-subheading h3{font:700 max(14px,.85rem) var(--body);color:var(--inv-heading);margin:0}
+.inv-subheading>span{font-size:max(14px,.75rem);color:var(--inv-muted)}
+.inv-equip-slots{display:grid;grid-template-columns:repeat(4,var(--inv-cell));gap:.5rem}
+.inv-hands-slots{grid-template-columns:repeat(2,var(--inv-cell))}.inv-magic-slots{grid-template-columns:repeat(3,var(--inv-cell))}
+.inv-belt-slots{justify-content:center}
+.inv-pack-row .inv-subheading,.inv-belt-row .inv-subheading{max-width:calc(5*var(--inv-cell) + 2rem);margin-left:auto;margin-right:auto}
+.inv-pack-slots{display:grid;grid-template-columns:repeat(5,var(--inv-cell));gap:.5rem;justify-content:center}
+
+/* Status sits under the slots it describes, one label/value cell each. */
+.inv-stats{display:flex;align-items:center;gap:.4rem 1.5rem;flex-wrap:wrap;padding:.55rem 1rem;background:var(--inv-deep);font-size:max(14px,.75rem);color:var(--inv-muted)}
+.inv-stats>span{display:flex;flex-direction:column;line-height:1.3}
+.inv-stats b{font-size:.95rem;color:var(--inv-ink);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}
+.inv-stats .inv-danger b{color:var(--bad)}
+.inv-stats>a{margin-left:auto;font-size:max(14px,.78rem)}
+
+/* Toolbar: one row. The match count lives inside the search field, so filtering never moves the page. */
+.inv-search{flex:1;min-width:10rem;display:flex;align-items:center;gap:.3rem;background:var(--inv-deep);border:1px solid var(--inv-line);border-radius:10px;padding-left:.6rem;min-height:44px}
+.inv-search>span[aria-hidden]{font:1.6rem/1 var(--body);color:var(--inv-muted)}
+.inv-search input[type=search]{min-width:0;width:100%;background:none;border:0;border-radius:4px;font-size:.9rem;color:var(--inv-ink);padding:.4rem}
+.inv-search input::placeholder{color:var(--inv-muted)}
+.inv-filter-status{flex:none;padding-right:.75rem;font-size:max(14px,.78rem);color:var(--inv-heading);white-space:nowrap}
+.inv-filter-status:empty{display:none}
+.inv-filters{display:flex;gap:.25rem;flex:none}
+.inv-filters button{background:transparent;border:1px solid transparent;border-radius:999px;color:var(--inv-muted);font-size:max(14px,.8rem);padding:.25rem .75rem;min-height:40px}
+.inv-filters button:hover{background:var(--inv-raised);color:var(--inv-ink)}
+.inv-filters button[aria-pressed=true]{color:var(--inv-ink);border-color:var(--line2);background:var(--inv-raised)}
+
+/* Slots */
+.inventory .inv-slot{border:0;border-radius:0;background:none;min-height:0;aspect-ratio:auto;padding:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:.25rem;position:relative;color:var(--inv-muted)}
+.inventory .inv-slot.wounded,.slot.inv-slot:not(.empty):not(.span):not(.wounded){border:0;background:none}
+.inv-slot>.inv-item,.inv-slot>.inv-empty-art{position:relative;width:100%;aspect-ratio:1;flex:none;margin:0;border:1px solid var(--inv-line);border-radius:10px;background:var(--inv-deep);overflow:hidden}
+.inventory .inv-item.card{display:block;padding:0;min-height:0;cursor:grab;border:1px solid var(--line2);box-shadow:none;color:var(--text);font:inherit;line-height:1.2}
+.inv-art{display:inline-flex;align-items:center;justify-content:center;background:var(--inv-deep);width:100%;height:100%;border-radius:9px;flex-shrink:0}
+.inv-art>*{display:block;width:76%;height:76%;filter:grayscale(1);transition:transform .15s}
+.inv-material{background:var(--inv-deep)} /* ink icons carry a paper rim: the tile follows the theme */
+.inv-material>*{width:88%;height:88%;filter:none;object-fit:contain;pointer-events:none}
+.inv-missing{color:var(--inv-muted)}
+.inv-item:hover{border-color:var(--text)}.inv-item:hover .inv-art>*{transform:scale(1.04)}
+.inv-item:focus-visible{outline-color:var(--text);outline-offset:3px}
+.inv-slot-no{position:absolute;top:.2rem;left:.3rem;color:var(--inv-muted);z-index:2;font:700 max(14px,.78rem)/1.2 var(--body);font-variant-numeric:lining-nums tabular-nums;pointer-events:none}
+/* Corner labels as in game bags: bare text outlined in the tile colour, so it reads over the art without a plate. The count reads ×6, never confused with slot 6. */
+.inv-slot-no,.inv-link,.inv-count{text-shadow:2px 0 0 var(--inv-deep),-2px 0 0 var(--inv-deep),0 2px 0 var(--inv-deep),0 -2px 0 var(--inv-deep),1.5px 1.5px 0 var(--inv-deep),-1.5px 1.5px 0 var(--inv-deep),1.5px -1.5px 0 var(--inv-deep),-1.5px -1.5px 0 var(--inv-deep),0 0 4px var(--inv-deep)}
+.inv-count{position:absolute;right:.3rem;bottom:.2rem;z-index:2;font:700 1.15rem/1 var(--body);font-variant-numeric:lining-nums tabular-nums;color:var(--inv-ink);pointer-events:none}
+.inv-count::before{content:"\D7";font-size:.8em;margin-right:.05em}
+.inv-link{position:absolute;left:.3rem;bottom:.2rem;font-size:max(14px,.7rem);color:var(--inv-ink);z-index:2;pointer-events:none}
+/* State badge: an inverted disc (ink fill, tile-coloured glyph and ring) so it never melts into the bone-and-ink art. */
+.inv-equipped{position:absolute;right:.12rem;top:.12rem;z-index:2;display:grid;place-items:center;width:1.05rem;height:1.05rem;border-radius:50%;background:var(--inv-ink);color:var(--inv-deep);box-shadow:0 0 0 2px var(--inv-deep);pointer-events:none}
+.inv-equipped svg{display:block;width:.7rem;height:.7rem}
+.inv-lit-ico{fill:currentColor}
+.inv-worn-ico{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.inv-slot.inv-linked .inv-art>*{opacity:.42;transform:scale(.85)}
+/* the ring goes round the square, never the name below it */
+.inv-slot.inv-selected>.inv-item{outline:2px solid var(--text);outline-offset:2px;box-shadow:none}
+.inv-slot>.card.moving{outline:3px dashed var(--text);outline-offset:2px}
+.inv-item-name{width:100%;font-size:max(14px,.72rem);text-align:center;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;line-height:1.5;height:3em;overflow-wrap:anywhere;color:var(--inv-muted);pointer-events:none;background:none}
+.inv-selected .inv-item-name{color:var(--inv-heading)}
+.inv-item-name .inv-wound-ico{color:var(--bad);vertical-align:-.15em;margin-right:.15rem}
+.inv-slot.wounded.empty .inv-item-name{color:var(--bad)}
+.inv-empty-art .inv-art{display:none}
+.inv-add{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:400 1.5rem var(--body);color:var(--inv-muted);opacity:.55}
+.inventory .inv-slot.empty:hover{background:none}
+.inv-slot.empty:hover .inv-empty-art{border-color:var(--inv-heading);background:var(--inv-raised)}
+.inv-slot.empty:hover .inv-add{color:var(--inv-heading);opacity:1}
+.inventory .inv-slot.target>.card,.inventory .inv-slot.target>.inv-empty-art{border:2px dashed var(--text);box-shadow:none}
+.inventory .inv-slot.nope{opacity:.45}
+/* drop target: the same ring as a picked card, round the square only */
+.inventory .inv-slot.drop-hover{outline:0}
+.inventory .inv-slot.drop-hover>.inv-item,.inventory .inv-slot.drop-hover>.inv-empty-art{outline:2px solid var(--text);outline-offset:2px}
+.inventory .inv-slot.inv-muted-match{opacity:.28}
+.inventory .inv-slot.wounded>.inv-item,.inventory .inv-slot.wounded>.inv-empty-art{border-color:var(--danger);box-shadow:inset 0 0 0 1px var(--danger)}
+.inv-wound-ico{width:1em;height:1em;flex:none}
+
+/* Wounds: hidden until "Mark wounds" (or pending damage); then each backpack square becomes the wound toggle. Nothing reflows.
+   Pet and hireling backpacks (.pet-slots) use the same toggle. */
+.inventory :is(.inv-pack-row,.pet-slots) .wbtn{display:none}
+.inventory.wmode :is(.inv-pack-row,.pet-slots) .wbtn{display:flex;position:absolute;left:0;right:0;top:0;width:auto;aspect-ratio:1;min-height:0;margin:0;z-index:4;flex-direction:column;align-items:center;justify-content:flex-end;gap:.1rem;padding:.3rem;border:2px dashed color-mix(in srgb,var(--danger) 75%,var(--line2));border-radius:10px;background:color-mix(in srgb,var(--panel) 50%,transparent);color:var(--text);font-size:max(14px,.72rem);font-weight:700;cursor:pointer}
+.inventory.wmode :is(.inv-pack-row,.pet-slots) .wbtn:hover{background:color-mix(in srgb,var(--danger) 22%,transparent)}
+.inventory.wmode :is(.inv-pack-row,.pet-slots) .wbtn[aria-pressed=true]{border-style:solid;border-color:var(--danger);background:color-mix(in srgb,var(--danger) 48%,transparent);color:#fff}
+.inventory.wmode :is(.inv-pack-row,.pet-slots) .wbtn.pending{animation:pulse 1s infinite alternate}
+.inventory.wmode :is(.inv-pack-row,.pet-slots) .wbtn>span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inventory .inv-wmode{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;padding:.2rem .7rem}
+.inventory .inv-wmode .inv-wound-ico{color:var(--bad)}
+.inventory .inv-wmode.danger.solid{background:var(--danger);border-color:var(--danger);color:var(--danger-ink)}.inventory .inv-wmode.danger.solid .inv-wound-ico{color:var(--danger-ink)}.inventory .inv-wmode.danger.solid:hover{background:color-mix(in srgb,var(--danger) 85%,#fff)}
+.inventory .inv-wmode[aria-pressed=true]{border-color:var(--danger)}
+
+/* Loot drawer */
+.inv-loot{position:relative;display:flex;min-width:0}
+.inv-loot-tab{writing-mode:vertical-rl;width:2.75rem;display:flex;align-items:center;justify-content:flex-start;gap:.5rem;padding:1rem 0;background:var(--inv-bg);border:1px solid var(--inv-line);border-radius:var(--r);color:var(--inv-muted);font:700 max(14px,.8rem)/1 var(--body);letter-spacing:.06em;cursor:pointer}
+.inv-loot-tab span{writing-mode:horizontal-tb}
+.inv-loot-tab:hover,.inv-loot-tab.drop-hover{color:var(--inv-ink);border-color:var(--line2);background:var(--inv-raised)}
+.inv-loot-panel{display:none;position:absolute;inset:0;width:21rem;flex-direction:column}
+.inv-loot-panel .xbtn{min-width:36px;min-height:36px;font-size:1.2rem}
+.inv-loot-body{flex:1;min-height:0;overflow:auto;padding:.4rem .5rem}
+.inv-loot-row{display:flex;align-items:center;gap:.4rem;padding:.25rem;border-radius:10px}
+.inv-loot-row+.inv-loot-row{margin-top:.15rem}
+.inv-loot-row.inv-selected{background:var(--inv-raised);box-shadow:inset 0 0 0 1px var(--text)}
+.inv-loot-pick{flex:1;min-width:0;display:flex;align-items:center;gap:.65rem;background:none;border:0;border-radius:8px;padding:.25rem;color:inherit;font:inherit;text-align:left;cursor:pointer;min-height:44px}
+.inv-loot-pick:hover{background:var(--inv-raised)}
+.inv-loot-pick>.inv-art{width:2.8rem;height:2.8rem;border:1px solid var(--line2);flex:none}
+.inv-loot-pick .nm{min-width:0;display:flex;flex-direction:column}
+.inv-loot-pick .nm>b{font-size:.95rem;overflow-wrap:anywhere}
+.inv-loot-pick .nm>b>span{color:var(--inv-muted);font-weight:400}
+.inv-loot-pick .nm>span{font-size:max(14px,.75rem);color:var(--inv-muted)}
+.inv-loot-empty{text-align:center;padding:1.5rem .5rem;color:var(--inv-ink);font-size:.9rem}
+.inv-loot-empty>span{display:block;margin-top:.25rem;color:var(--inv-muted);font-size:max(14px,.78rem)}
+.inv-pool-drop{width:100%;display:flex;align-items:center;justify-content:center;gap:.6rem;color:var(--inv-muted);border:1px dashed var(--line2);border-radius:10px;background:transparent;padding:.6rem;margin-top:.5rem;font-size:max(14px,.8rem);min-height:44px}
+.inv-pool-drop:hover{background:var(--inv-raised);border-color:var(--inv-heading);color:var(--inv-ink)}
+.inv-loot-body.drop-hover,.inv-pool-drop.drop-hover{outline:3px solid var(--text);outline-offset:-4px}
+@container inv (min-width:64rem){
+  .inv-shell:is(.auto,.open) .inv-loot{width:21rem}
+  .inv-shell:is(.auto,.open) .inv-loot-tab{display:none}
+  .inv-shell:is(.auto,.open) .inv-loot-panel{display:flex}
+}
+@container inv (max-width:64rem){
+  .inv-shell.open .inv-loot-panel{display:flex;inset:0 calc(100% + .5rem) 0 auto;width:min(21rem,calc(100cqw - 5rem));z-index:6;box-shadow:var(--shadow)}
+}
+
+/* Item card next to its slot */
+.inv-pop{position:fixed;z-index:40;width:min(22rem,calc(100vw - 16px));overflow:auto;background:var(--inv-bg);border:1px solid var(--line2);border-radius:14px;box-shadow:0 18px 44px -12px rgba(0,0,0,.75)}
+:root[data-theme=light] .inv-pop{box-shadow:var(--shadow)}
+.inv-pop[hidden]{display:none}
+#inv-detail-body{display:flex;flex-direction:column;gap:.7rem;padding:1rem}
+.inv-detail-heading{display:flex;align-items:center;gap:.75rem}
+.inv-detail-heading>.inv-art{width:3.25rem;height:3.25rem;border:1px solid var(--line2);flex:none}
+.inv-detail-heading>div{min-width:0;flex:1}
+.inv-detail-heading h3{font:700 1.3rem/1.15 var(--display);margin:.1rem 0;color:var(--inv-heading);overflow-wrap:anywhere}
+.inv-detail-heading .inv-eyebrow{font-size:max(14px,.7rem);letter-spacing:.05em;color:var(--inv-muted)}
+.inv-detail-heading>.xbtn{align-self:flex-start;flex:none}
+.inv-muted{color:var(--inv-muted);font-size:max(14px,.8rem)}
+.inv-detail-card .card{--paper:transparent;--paper2:var(--inv-raised);--ink:var(--inv-ink);--ink-muted:var(--inv-muted);--paper-line:var(--inv-line);border:0;box-shadow:none;border-radius:0;padding:0;gap:.6rem;font-size:.9rem;line-height:1.5}
+.inv-detail-card .card>.nm,.inv-detail-card .card>.catl{display:none}
+.inv-detail-card .card .meta{background:var(--inv-deep);border:1px solid var(--inv-line);font-size:max(14px,.8rem);padding:.4rem .5rem;border-radius:8px}
+.inv-detail-card .card .ln,.inv-detail-card .card .price,.inv-detail-card .card .tt{font-size:max(14px,.85rem)}
+.inv-detail-card .card .tt{border-radius:8px}
+.inv-detail-card .card .tt .th{color:var(--inv-heading)}
+.inv-detail-card .card .tt div{padding:.4rem .25rem}
+.inv-detail-card .card .badge{position:static;align-self:flex-start;background:var(--inv-raised);color:var(--inv-heading);font-size:.85rem}
+.inv-detail-card .card .acts{gap:.4rem}
+.inv-detail-card .card .acts button,.inventory .btn,.inv-pop .btn{min-height:44px;border:1px solid var(--inv-line);border-radius:10px;padding:.4rem .7rem;background:var(--inv-raised);color:var(--inv-ink);font-size:max(14px,.82rem)}
+.inv-detail-card .card .acts button:hover,.inventory .btn:hover,.inv-pop .btn:hover{border-color:var(--inv-heading)}
+.inv-detail-card .card .acts button[aria-pressed=true]{background:var(--inv-raised);color:var(--text);border-color:var(--text)}
+.inv-detail-card .card .pips{flex-wrap:wrap;gap:.25rem}
+.inv-detail-card .card .pip{width:44px;height:44px;background:var(--inv-heading);border:1px solid var(--inv-heading);border-radius:8px;position:relative}
+.inv-detail-card .card .pip:after{content:"•";color:var(--panel);font-size:1.25rem}
+.inv-detail-card .card .pip.gone{background:none;border-style:dashed}
+.inv-detail-card .card .pip.gone:after{color:var(--inv-muted)}
+.inv-draw{font-size:.9rem;margin:0;color:var(--inv-muted)}
+.inv-draw b{color:var(--inv-ink)}
+.inv-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;border-top:1px solid var(--inv-line);padding-top:.75rem}.inv-detail-actions.one{grid-template-columns:1fr}
+.inv-detail-actions .btn{justify-content:center}
+.inventory .btn.primary,.inv-pop .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.inventory .btn.primary:hover,.inv-pop .btn.primary:hover{background:color-mix(in srgb,var(--accent) 86%,var(--panel))}
+.inv-pop .btn.danger{background:none;border-color:color-mix(in srgb,var(--danger) 70%,var(--line2));color:var(--bad)}
+.inv-pop .btn.danger:hover{background:var(--danger);border-color:var(--danger);color:var(--danger-ink)}
+.inv-pop-foot{display:flex;align-items:center;gap:1rem;border-top:1px solid var(--inv-line);padding-top:.6rem}.inv-pop-foot .btn.danger{margin-left:auto}
+.inv-pop .lnk{background:none;border:0;padding:.5rem 0;min-height:44px;color:var(--inv-muted);font:600 max(14px,.82rem) var(--body);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line2);cursor:pointer}.inv-pop .lnk:hover{color:var(--inv-ink)}
+.inv-detail-actions kbd{font:700 .8rem var(--body);border:1px solid currentColor;border-radius:4px;padding:.05rem .4rem;margin-left:.4rem}
+
+.inventory .banner{border-color:var(--inv-heading);background:var(--inv-raised);color:var(--inv-ink)}
+.inventory .banner.bad{border-color:var(--danger)}
+.inventory .xbtn,.inv-pop .xbtn{border-radius:10px}
+#panel.inv-item-panel{background:var(--inv-bg);color:var(--inv-ink)}
+.inv-item-panel .ph{background:var(--inv-raised);border-color:var(--inv-line)}
+.inv-item-panel #ptitle{color:var(--inv-heading)}
+.inv-item-panel .muted{color:var(--inv-muted)}
+:root[data-theme=light] .inv-art:not(.inv-material) svg{filter:grayscale(1) brightness(.62)}
+:root[data-theme=contrast] .inventory .inv-slot.inv-muted-match{opacity:.55}
+
+/* Tooltips inherit the same display settings as the rest of the site. */
+#preview.inv-preview{width:min(22rem,calc(100vw - 16px));max-height:calc(100dvh - 16px);overflow:hidden;border:1px solid var(--line2);border-radius:14px;box-shadow:var(--shadow);background:var(--panel)}
+#preview.inv-preview .card{--paper:var(--panel);--paper2:var(--panel2);--ink:var(--text);--ink-muted:var(--muted);--paper-line:var(--line);border:0;border-radius:0;padding:1rem;gap:.5rem;box-shadow:none}
+#preview.inv-preview .card .nm{color:var(--text);font-size:1.3rem;padding:0}
+#preview.inv-preview .card .catl{color:var(--muted)}
+#preview.inv-preview .card .ln,#preview.inv-preview .card .meta,#preview.inv-preview .card .price,#preview.inv-preview .card .tt{font-size:max(14px,.85rem)}
+#preview.inv-preview .card .pip{background:var(--text);border-color:var(--text)}
+
+/* Phones: panels stack, the loot drawer sits below them. */
+@container inv (max-width:40rem){
+  .inv-shell{grid-template-columns:minmax(0,1fr);row-gap:1rem}
+  .inv-loot-tab{writing-mode:horizontal-tb;width:100%;padding:.75rem 1rem}
+  .inv-loot-tab span{display:none}
+  .inv-shell.open .inv-loot{flex-direction:column}
+  .inv-shell.open .inv-loot-tab{display:none}
+  .inv-shell.open .inv-loot-panel{display:flex;position:static;width:auto;max-height:28rem}
+}
+@container invmain (max-width:36rem){
+  .inv-layout{--inv-cell:clamp(44px,calc((100cqw - 4rem - 2px)/5),100px);grid-template-columns:minmax(0,1fr);row-gap:1rem}
+  .inv-equipment,.inv-backpack{grid-column:1;grid-row:auto;grid-template-rows:auto auto auto auto}
+  .inv-bag-tools{grid-row:auto;flex-wrap:wrap;margin-bottom:0}.inv-search{flex-basis:100%}
+}
+@container invmain (max-width:24rem){
+  .inv-filters button{padding:.2rem .45rem}
+  .inv-item-name{font-size:14px}.inv-window-title{padding:.55rem .7rem}
+  .inv-subheading{flex-wrap:wrap}
+}
+
+/* Status between the two backpack rows: one line, same height as the Belt caption opposite, so rows stay aligned. */
+/* Status plate under the backpack: one cell per figure, label above value */
+.inv-status{grid-column:2;grid-row:5;display:grid;grid-template-columns:auto minmax(0,1.6fr) auto auto auto;margin-top:.6rem;background:var(--inv-bg);border:1px solid var(--inv-line);border-radius:var(--r);overflow:hidden}
+.inv-status>div{display:flex;flex-direction:column;gap:.1rem;min-width:0;padding:.45rem .9rem;border-left:1px solid var(--inv-line)}
+.inv-status>div:first-child{border-left:0}
+.inv-status span{font-size:max(14px,.7rem);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--inv-muted)}
+.inv-status b{font-size:1rem;color:var(--inv-ink);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv-status .inv-danger b{color:var(--bad)}
+.inv-status .inv-danger{box-shadow:inset 0 -3px 0 var(--danger)}
+@container invmain (max-width:36rem){.inv-status{grid-column:1;grid-row:auto;margin-top:0}}
+
+.petinv .inv-item-name{height:auto;-webkit-line-clamp:1}
+
+/* Placing / moving / pending wounds: one floating bar above the bottom navigation */
+.placebar{position:fixed;left:50%;bottom:calc(var(--nb,60px) + .75rem);transform:translateX(-50%);z-index:45;display:flex;align-items:center;gap:1rem;width:max-content;max-width:calc(100vw - 2rem);background:var(--text);color:var(--panel);border-radius:22px;padding:.4rem .45rem .4rem 1.2rem;min-height:44px;box-shadow:0 12px 30px -8px rgba(0,0,0,.7);font-size:max(14px,.95rem)}
+.placebar>span{flex:1 1 auto;min-width:0}
+.placebar .btn{flex:none;background:var(--panel);color:var(--text);border-color:var(--panel);border-radius:999px}
+.placebar.bad{background:var(--danger);color:var(--danger-ink);padding-right:1.2rem}
+body:has(.placebar) main{padding-bottom:4.5rem}
+
+/* a card picked on a read-only board (builder) or a companion's backpack: the same ring as the inventory */
+.inv-slot.pop-on>.inv-item{outline:2px solid var(--text);outline-offset:2px}
+/* Pets and hirelings: the same squares as the player's backpack */
+.petinv{container:none}
+.petinv .pet-slots{display:grid;grid-template-columns:repeat(auto-fill,84px);gap:.5rem .6rem;padding:.9rem 1rem}
+.petinv .inv-slot>.inv-item,.petinv .inv-slot>.inv-empty-art{width:84px}
+.petinv button.inv-item{padding:0;font:inherit;color:inherit;cursor:pointer}
+.petinv .inv-item-name{height:auto;-webkit-line-clamp:1}
+.comp-give{display:flex;gap:.5rem;align-items:center;padding:.6rem 1rem .9rem;border-top:1px solid var(--inv-line)}
+.comp-give select{min-height:44px;max-width:100%}
+
+.comp-pack .inv-window-title>span{margin:0 auto 0 .75rem}

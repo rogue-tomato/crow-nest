@@ -1,0 +1,118 @@
+/* Hex map editor (hexedit.js): tool rail, editor panel, edit overlay on the map, New map / Generate dialogs.
+   Same HUD language as hexmap.css (dark chips over the paper map); the panel uses the site's tokens. SVG lengths are hex radii. */
+.hxedit>svg{cursor:crosshair}
+.hxedit[data-tool=pan]>svg,.hxedit.panning>svg{cursor:grab}
+.hxedit[data-tool=pan]>svg:active,.hxedit.panning>svg:active{cursor:grabbing}
+.hxtools button:disabled{opacity:.38;cursor:default}
+.hxtools button:disabled:hover{background:none}
+.hxmode button{padding:0 .85rem;font-size:.95rem}
+
+/* tool rail: Hexer's vertical toolbar at the left edge, below the mode switch; on narrow screens a row beside it, clear of the bottom sheet */
+.hxbr{flex-basis:100%;height:0}
+.hxrail{display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;background:rgba(16,15,14,.88);border:1px solid rgba(239,230,207,.18);border-radius:12px;overflow:hidden}
+.hxrail button{width:46px;height:44px;border:0;background:none;color:#efe6cf;display:grid;place-items:center;cursor:pointer}
+.hxrail button+button{border-top:1px solid rgba(239,230,207,.12)}
+.hxrail button:hover{background:rgba(239,230,207,.1)}
+.hxrail button:focus-visible{outline:2px solid #efe6cf;outline-offset:-3px}
+.hxrail button[aria-pressed=true]{background:#efe6cf;color:#141414}
+
+/* edit overlay */
+.hxmap .hxed path{vector-effect:non-scaling-stroke}
+.hxmap .hxed .eblank{fill:#e2d6b8;stroke:rgba(108,86,56,.34);stroke-width:1px}
+.hxmap .hxed .pend{stroke:none}
+.hxmap .hxed .etint{fill-opacity:.3;stroke:none}
+.hxmap .hxed .ecut{fill:rgba(255,255,255,.3);stroke:#fff;stroke-width:1.5px;stroke-dasharray:4 3}
+.hxmap .hxed .edraw{fill:none;stroke:#6e4f30;stroke-width:4px;stroke-linecap:round;stroke-linejoin:round}
+.hxmap .hxed .edraw.secondary{stroke:#8a6a44;stroke-width:3px;stroke-dasharray:7 5}
+.hxmap .hxed .edraw.water{stroke:#3f74a3;stroke-width:4px}
+.hxmap .hxed .esel0{fill:none;stroke:#141414;stroke-width:5px;stroke-opacity:.6}
+.hxmap .hxed .esel{fill:none;stroke:#fff;stroke-width:2.5px;stroke-dasharray:7 4}
+.hxmap .hxed .enote{fill:#f3ecd9;stroke:#1b1612;stroke-width:.06}
+.hxedit .hxmap .hov,.hxedit .hxmap .prev{vector-effect:non-scaling-stroke}
+.hxedit .hxmap .hov{stroke-width:2px}
+.hxedit .hxmap .prev{stroke:#1b1612;stroke-opacity:.6;stroke-width:2px;stroke-dasharray:5 5}
+.hxedit[data-tool=wall] .hxmap .hov{stroke:#7d1a16;stroke-opacity:.8;stroke-width:5px;stroke-linecap:round}
+
+/* panel */
+.hxedit .hxpanel input[type=text],.hxedit .hxpanel input[type=search],.hxedit .hxpanel textarea,.hxedit .hxpanel select{width:100%;box-sizing:border-box}
+.hxedit .hxpanel textarea{font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:.5rem .6rem;resize:vertical;min-height:6rem}
+.hxedit .hxpanel textarea:focus{outline:0;border-color:var(--text);box-shadow:0 0 0 3px color-mix(in srgb,var(--text) 14%,transparent)}
+.hxedit .hxpanel .row{gap:.5rem}
+.seg.hxseg{background:var(--panel2);border-color:var(--line);align-self:flex-start}
+.seg.hxseg button{color:var(--text);min-width:44px;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
+.seg.hxseg button[aria-pressed=true]{color:var(--accent-ink)}
+.hxk{font:600 .8rem/1 var(--body);color:var(--muted);border:1px solid var(--line2);border-radius:5px;padding:.15rem .35rem}
+.hxsrch{display:flex;gap:.5rem;align-items:stretch}
+.hxsrch input{flex:1;min-height:44px}
+.hxsrch .btn{flex:none}
+.hxsrch .btn[aria-pressed=true]{background:var(--text);color:var(--panel)}
+.hxtg[hidden]{display:none}
+.hxtg .bh{margin:.3rem 0 .35rem}
+.hxsw{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem}
+.hxswb,.hxptb,.hxrg{display:flex;align-items:center;gap:.55rem;min-height:44px;padding:.3rem .55rem;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);
+  font:600 .92rem/1.15 var(--body);text-align:left;cursor:pointer;min-width:0}
+.hxswb[hidden]{display:none}
+.hxswb:hover,.hxptb:hover,.hxrg:hover{border-color:var(--line2)}
+.hxswb[aria-pressed=true],.hxptb[aria-pressed=true],.hxrg[aria-pressed=true]{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+.hxswb:focus-visible,.hxptb:focus-visible,.hxrg:focus-visible,.hxlnk:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.hxswb i{flex:none;width:24px;height:28px;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.hxptb svg{flex:none;width:28px;height:28px;padding:3px;box-sizing:border-box;border-radius:50%;background:color-mix(in srgb,var(--c) 60%,#f3ecd9);border:2px solid var(--c);fill:#1a0f08}
+.hxregs{display:flex;flex-direction:column;gap:.35rem}
+.hxrg i{flex:none;width:16px;height:16px;border-radius:4px;background:var(--c)}
+.hxrg .muted{margin-left:auto;font-weight:400}
+.hxpl{display:inline-block;flex:none;width:22px;border-top:4px solid #8a6a44;vertical-align:middle}
+.hxpl.secondary{border-top-style:dashed}
+.hxpl.water{border-color:#4a7aa3}
+.hxlnk{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .45rem;min-height:44px;padding:.25rem 0;border:0;background:none;color:var(--text);font:600 .95rem/1.2 var(--body);text-align:left;cursor:pointer}
+.hxlnk[aria-pressed=true]{text-decoration:underline;text-underline-offset:3px}
+.hxlnk .muted{font-weight:400}
+.hxchk{display:flex;align-items:center;gap:.55rem;min-height:44px;cursor:pointer}
+.hxchk input{width:20px;height:20px;margin:0}
+.hxcol input[type=color]{width:64px;height:40px;padding:2px;border:1px solid var(--line2);border-radius:8px;background:var(--panel2);cursor:pointer}
+.hxform{display:flex;flex-direction:column;gap:.6rem;padding-top:.7rem;border-top:1px solid var(--line)}
+.hxform .fld{margin:0}
+
+/* dialogs */
+.hxdlg{max-width:36rem}
+.hxdlg .row .fld{flex:1;min-width:6.5rem}
+.hxtpl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;border:0;padding:0;margin:0 0 1rem}
+.hxtpl legend,.hxori legend{padding:0;margin-bottom:.4rem;color:var(--muted)}
+.hxtpl label{display:grid;grid-template-columns:auto 1fr;align-content:start;column-gap:.55rem;row-gap:.1rem;padding:.6rem .7rem;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.hxtpl label input{grid-row:span 2;margin:.25rem 0 0}
+.hxtpl label:has(input:checked){border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+#dlg:has(.hxgen){max-width:min(48rem,94vw)}
+.hxgen .hxtpl{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hxori{border:0;padding:0;margin:.25rem 0 .25rem;display:flex;flex-wrap:wrap;align-items:center;gap:.25rem 1.25rem}
+.hxori legend{float:left;margin:0 .5rem 0 0}
+.hxori label{display:flex;gap:.45rem;align-items:center;min-height:44px;cursor:pointer}
+@media (max-width:980px){
+  .hxbr{display:none}
+  .hxrail{flex-direction:row}
+  .hxrail button+button{border-top:0;border-left:1px solid rgba(239,230,207,.12)}
+}
+@media (max-width:700px){.hxgen .hxtpl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.hxtpl,.hxgen .hxtpl{grid-template-columns:1fr}}
+
+/* save, selection, regions as a border, tokens, colour picker, painted swatches */
+.hxtools .hxsavebtn{display:inline-flex;align-items:center;gap:.4rem;padding:0 .75rem}
+.hxsavebtn span{font:700 .9rem/1 var(--body)}
+.hxsaved{color:var(--muted)}
+.hxsaved.bad{color:var(--bad);font-weight:700}
+.hxmap .hxed .esela{fill:rgba(255,255,255,.24);stroke:none}
+.hxmap .hxed .efog{fill:rgba(18,16,14,.34);stroke:none}
+.hxmap .hxed .eline{fill:none;stroke-width:4px;stroke-linecap:round}
+.hxmap .hxed .eadd{fill:none;stroke-width:2.5px;stroke-dasharray:5 4}
+.hxcolf{gap:.35rem}
+.hxcolb{align-self:flex-start;gap:.5rem;font-variant-numeric:lining-nums tabular-nums}
+.hxcolb i{width:20px;height:20px;border-radius:5px;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.35)}
+.hxcp{display:flex;flex-direction:column;gap:.6rem;padding:.7rem;border:1px solid var(--line2);border-radius:12px;background:var(--panel2)}
+.hxcpg{display:grid;grid-template-columns:repeat(6,44px);gap:6px}
+.hxcpg button{width:44px;height:36px;border-radius:8px;border:2px solid transparent;background:var(--c);cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.28)}
+.hxcpg button[aria-pressed=true]{border-color:var(--text);box-shadow:inset 0 0 0 2px var(--panel2)}
+.hxcpg button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.hxcph{display:flex;align-items:center;gap:.5rem}
+.hxedit .hxpanel .hxcph input{width:7.5rem;font-variant-numeric:lining-nums tabular-nums}
+.hxdot{display:inline-block;flex:none;width:14px;height:14px;border-radius:50%;background:var(--c)}
+.hxswb i.sp{background:url(icons/terrain-swatches.webp) calc(var(--sx) * -28px - 2px) 0/1148px 28px no-repeat,var(--c)}
+@media (max-width:1180px){.hxsavebtn span{display:none}}
+.hxmap .hxed .efogoff{fill:rgba(255,246,214,.28);stroke:none}

@@ -1,0 +1,24 @@
+/* Account and table controls share the application's Display settings. */
+#account-dialog{width:min(880px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);padding:0;background:var(--panel);color:var(--text);border:1px solid var(--line2);border-radius:var(--r)}
+#account-dialog::backdrop{background:rgba(0,0,0,.7)}
+.account-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--line)}
+.account-head h2{font-size:1.55rem}.account-head .ibtn{min-width:44px;min-height:44px}
+.account-body{padding:1.25rem}.account-body p{margin:.45rem 0 1rem}.account-body .small{font-size:max(14px,.85rem)}
+.account-body label{display:grid;gap:.3rem}.account-body input:not([type=checkbox]),.account-body select{width:100%;min-width:0;min-height:44px;border:1px solid var(--line2);background:var(--shell);border-radius:6px;padding:.5rem .65rem}
+.account-body input[type=checkbox]{min-width:24px;min-height:24px;accent-color:var(--accent)}
+.account-body .btn{min-height:44px;font-size:max(14px,.9rem)}
+.account-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr));gap:1.25rem}.account-form{display:grid;gap:.85rem;align-content:start}
+.account-section{padding:1rem 0;border-top:1px solid var(--line)}.account-section:first-child{padding-top:0;border-top:0}
+.account-section h3{font-size:1.2rem;margin-bottom:.65rem}.account-list{display:grid;gap:.5rem;margin:.75rem 0}
+.account-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.75rem;border:1px solid var(--line);border-radius:8px;min-width:0}
+.account-row>div{min-width:0}.account-row strong{overflow-wrap:anywhere}.account-row .muted{display:block}.account-row .btn{flex-shrink:0}
+.account-message{padding:.75rem;border:1px solid var(--line2);border-radius:6px;margin-bottom:1rem;overflow-wrap:anywhere}.account-message.error{border-color:var(--bad);color:var(--bad)}
+.account-status{display:flex;gap:.5rem;align-items:center;font-size:max(14px,.85rem)}.account-status::before{content:'';display:block;width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+.account-status[data-status="Needs attention"]{color:var(--bad)}.account-status strong{font-weight:400}
+.account-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}.account-lead{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:1rem}
+.account-empty{color:var(--muted);border:1px dashed var(--line2);padding:1rem;border-radius:8px}.account-code{font-size:1.8rem;letter-spacing:.12em;font-family:var(--body);overflow-wrap:anywhere}
+.account-import-label{display:flex!important;align-items:center;gap:.65rem!important}.account-import-label span{min-width:0;overflow-wrap:anywhere}
+.account-body details>summary{cursor:pointer;min-height:44px;padding:.5rem 0}.account-body details{margin-top:.5rem}
+.account-body [data-account=end],.account-body [data-account=revoke-member]{border-color:var(--bad);color:var(--bad)}
+#cloud-status{margin-left:auto;max-width:15rem;white-space:normal;font-size:max(14px,.8rem);min-height:44px}
+@media(max-width:760px){.account-grid{grid-template-columns:1fr}.account-head,.account-body{padding:1rem}.account-lead{flex-direction:column}.account-row{flex-wrap:wrap}#cloud-status{max-width:8rem}.account-code{font-size:1.35rem}}
