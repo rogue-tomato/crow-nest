@@ -1,0 +1,214 @@
+/* Hex crawl: Ref's Hex map and the players' Map tab (hexmap.js). The map is a light paper object on the dark table,
+   with a fixed palette in every theme; HUD, card and panel use the site's tokens. Lengths inside the SVG are hex radii. */
+.hxstage{--hxpw:min(22rem,42%);position:relative;height:70vh;min-height:420px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  background:#e4d8bc radial-gradient(ellipse at 50% 45%,#ebe1c8 0,#e2d5b6 60%,#d6c7a4 100%);touch-action:none;user-select:none;-webkit-user-select:none;outline-offset:-3px}
+.hxstage:focus-visible{outline:2px solid var(--sel)}
+.hxstage[data-panel=closed]{--hxpw:0px}
+:root.hxfs .hxstage{position:fixed;inset:0;z-index:45;height:100vh!important;height:100dvh!important;margin:0;border:0;border-radius:0} /* the page is full screen; the map fills it above the bar */
+:root.hxfs body{overflow:hidden}
+.hxstage>svg{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;transform-origin:50% 50%;overflow:visible;will-change:transform}
+.hxstage>svg:active{cursor:grabbing}
+/* loading: a progress bar over the map area (left of the panel); the HUD and the panel stay usable; fades out when the map is ready */
+.hxload{position:absolute;top:0;bottom:0;left:0;right:var(--hxpw);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;background:inherit;color:#3a2a1c;pointer-events:none;transition:opacity .28s ease}
+.hxload b{font:600 1.15rem/1.2 var(--display)}
+.hxload .hxbar{position:relative;width:min(17rem,60%);height:.55rem;border-radius:999px;background:rgba(58,42,28,.16);overflow:hidden}
+.hxload .hxbar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,250,235,.45),transparent);transform:translateX(-100%);animation:hxsheen 1.3s ease-in-out infinite}
+@keyframes hxsheen{to{transform:translateX(100%)}}
+.hxload .hxbar i{display:block;height:100%;background:#6b4a2c;border-radius:inherit;transform-origin:left center;transform:scaleX(var(--p,0));transition:transform .18s linear}
+.hxload small{font:500 .9rem/1.2 var(--body);color:#5a4632;font-variant-numeric:tabular-nums}
+.hxload.done{opacity:0}
+@media (prefers-reduced-motion:reduce){.hxload,.hxload .hxbar i{transition:none}.hxload .hxbar::after{animation:none;display:none}}
+.hxstage>canvas.hxgl{position:absolute;inset:0;width:100%;height:100%;display:block;transform-origin:50% 50%;pointer-events:none;will-change:transform}
+
+/* map layers */
+.hxmap .fogr{fill:rgba(18,16,14,.3)}
+/* painted map (hexart.js): parchment around it, a thin dark grid, even rivers cut at the shore, cased roads, borders and walls */
+.hxmap .grid{fill:none;stroke:rgba(196,176,134,.42);stroke-width:.03}
+.hxmap .fogp{fill:#d8ccae;stroke:#c9bb98;stroke-width:.03}
+.hxmap .ov path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.hxmap .regb{fill:none;stroke-width:.08;stroke-opacity:.85;stroke-linecap:round}
+.hxmap .wall{fill:none;stroke:#7d1a16;stroke-width:.12;stroke-linecap:round}
+.hxmap .reg{font:600 .42px var(--display);letter-spacing:.1em;text-transform:uppercase;fill:#8b4a3d;text-anchor:middle;stroke:#fff;stroke-opacity:.8;stroke-width:.11;paint-order:stroke}
+.hxmap .poi .esh{fill:none;stroke:#222;stroke-opacity:.3;stroke-width:.02}
+.hxmap .poi .ef{fill:var(--c);fill-opacity:.5;stroke:var(--c);stroke-opacity:.9;stroke-width:.05}
+.hxmap .poi path{fill:#1a0f08;fill-opacity:.85}
+.hxmap .poi.hid .ef{fill-opacity:.22;stroke-dasharray:.08 .07}
+.hxmap .lbl{font:600 .45px var(--display);fill:#2c1810;stroke:#f0dbb8;stroke-width:.1;paint-order:stroke;text-anchor:middle;letter-spacing:.057em}
+.hxmap .ov{pointer-events:none}
+.hxmap.small .reg{font-size:1.1px}
+.hxmap .tr{stroke:#2a211a;stroke-width:.09;stroke-dasharray:.01 .2}
+.hxmap .tr.lt{stroke:#a3322f}
+.hxmap .rt0{stroke:#1b1612;stroke-width:.22}
+.hxmap .rt{stroke:#f3ecd9;stroke-width:.11;stroke-dasharray:.3 .18}
+.hxmap .rtend{fill:#f3ecd9;stroke:#1b1612;stroke-width:.06}
+.hxmap .rtd rect{fill:#1b1612}
+.hxmap .rtd text{font:700 .3px var(--body);fill:#f3ecd9;text-anchor:middle}
+.hxmap .prev{stroke:#f3ecd9;stroke-opacity:.7;stroke-width:.08;stroke-dasharray:.12 .12}
+.hxmap .poi.hid path{fill-opacity:.45}
+.hxmap.small .lbl{display:none}
+.hxmap .sel{fill:none;stroke:#fff;stroke-width:.1}
+.hxmap .hov{fill:rgba(255,255,255,.12);stroke:rgba(255,255,255,.85);stroke-width:.05}
+.hxmap .pty circle{fill:#141414;stroke:#efe6cf;stroke-width:.08}
+.hxmap .pty.q circle{stroke-dasharray:.2 .12}
+.hxmap .pty text{fill:#efe6cf;text-anchor:middle;font:800 .55px var(--body)}
+.hxmap .pty.drag{pointer-events:auto;cursor:grab}
+.hxmap .hxping circle{fill:none;stroke-width:.09;transform-box:fill-box;transform-origin:center;animation:hxping 1.3s ease-out 3 forwards;animation-delay:var(--d)}
+.hxmap .hxping .r2{animation-delay:calc(var(--d) + .45s)}
+.hxmap .hxping text{font:700 .4px var(--body);text-anchor:middle;stroke:#141414;stroke-width:.12;paint-order:stroke;animation:hxfade 4s linear forwards;animation-delay:var(--d)}
+.hxmap .hxping.look circle{stroke:#f3ecd9}.hxmap .hxping.look text{fill:#f3ecd9}
+.hxmap .hxping.danger circle{stroke:#e0524b}.hxmap .hxping.danger text{fill:#ff8d86}
+.hxmap .hxping.go circle{stroke:#8cc07a}.hxmap .hxping.go text{fill:#b5e3a5}
+@keyframes hxping{from{transform:scale(.4);opacity:1}to{transform:scale(2.6);opacity:0}}
+@keyframes hxfade{0%,80%{opacity:1}to{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hxmap .hxping circle{animation:none;opacity:.9}}
+
+/* HUD over the map */
+.hxhud{position:absolute;z-index:2;display:flex;gap:.5rem;align-items:flex-start;pointer-events:none}
+.hxhud>*{pointer-events:auto}
+.hxhud.tl{top:.75rem;left:.75rem;right:calc(var(--hxpw) + 16rem);flex-wrap:wrap}
+.hxhud.tr{top:.75rem;right:calc(var(--hxpw) + .75rem);flex-wrap:wrap;justify-content:flex-end}
+.hxhud.bar{top:.75rem;left:.75rem;right:calc(var(--hxpw) + .75rem);flex-wrap:wrap}
+.hxhud.bar>*{flex-shrink:0}
+.hxgrow{flex:1 0 0}
+.hxtr{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem;margin-left:auto}
+.hxchip{background:rgba(16,15,14,.88);color:#efe6cf;border:1px solid rgba(239,230,207,.18);border-radius:999px;padding:.45rem .85rem;font-size:.9rem;line-height:1.2;white-space:nowrap}
+.hxchip.bad{border-color:#c4544e;color:#ffb3ae}
+.hxtools{display:flex;background:rgba(16,15,14,.88);border:1px solid rgba(239,230,207,.18);border-radius:12px;overflow:hidden}
+.hxtools button{min-width:44px;height:44px;border:0;background:none;color:#efe6cf;font:700 1.05rem var(--body);display:grid;place-items:center;padding:0 .55rem;cursor:pointer}
+.hxtools button+button{border-left:1px solid rgba(239,230,207,.12)}
+.hxtools button:hover{background:rgba(239,230,207,.1)}
+.hxtools button:focus-visible{outline:2px solid #efe6cf;outline-offset:-3px}
+.hxtools button[aria-pressed=true]{background:#efe6cf;color:#141414}
+#hxzl{min-width:4.2rem;font-size:.9rem;font-variant-numeric:tabular-nums}
+.hxcard{position:absolute;left:0;top:0;z-index:4;max-width:18rem;background:rgba(16,15,14,.94);color:#efe6cf;border:1px solid rgba(239,230,207,.2);border-radius:10px;
+  padding:.55rem .75rem;font-size:.9rem;line-height:1.35;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.hxcard[hidden],.hxpm[hidden]{display:none}
+.hxcard .muted{color:#b7ae9c}
+.hxpm{position:absolute;left:0;top:0;z-index:5;display:flex;flex-direction:column;background:rgba(16,15,14,.96);border:1px solid rgba(239,230,207,.25);border-radius:12px;overflow:hidden;min-width:11rem}
+.hxpm button{min-height:44px;border:0;background:none;color:#efe6cf;font:600 1rem var(--body);text-align:left;padding:0 1rem;cursor:pointer}
+.hxpm button+button{border-top:1px solid rgba(239,230,207,.12)}
+.hxpm button:hover,.hxpm button:focus-visible{background:rgba(239,230,207,.12);outline:none}
+.hxpm [data-v=danger]{color:#ff8d86}.hxpm [data-v=go]{color:#b5e3a5}.hxpm .x{color:#b7ae9c}
+
+/* side panel: right on wide screens, bottom sheet on narrow ones */
+.hxpanel{position:absolute;top:0;right:0;bottom:0;width:var(--hxpw);z-index:3;background:var(--panel);border-left:1px solid var(--line);overflow:auto;
+  padding:1rem;touch-action:pan-y;user-select:text;-webkit-user-select:text;display:flex;flex-direction:column;gap:1.1rem}
+.hxstage[data-panel=closed] .hxpanel{display:none}
+.hxsec{display:flex;flex-direction:column;gap:.5rem}
+.hxsec+.hxsec{border-top:1px solid var(--line);padding-top:1rem}
+.hxh{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .6rem;margin:0;font-size:1.05rem}
+.hxh .muted{font-size:.85rem;font-weight:400}
+.hxh .btn{margin-left:auto}
+.hxsec .banner{margin:0}
+.hxpad{display:grid;grid-template-columns:repeat(3,46px);grid-template-rows:repeat(3,44px);gap:4px;flex:none}
+.hxpad .btn{min-height:44px;padding:0;justify-content:center}
+.hxc{display:grid;place-items:center;color:var(--muted)}
+.hxlog{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.45rem;font-size:.92rem}
+.hxlog li{border-left:2px solid var(--line2);padding-left:.6rem}
+.hxfile{position:relative;cursor:pointer}
+.hxfile input{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}
+.hxfile:focus-within{outline:2px solid var(--sel);outline-offset:2px}
+.hxrow{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.45rem 0;border-top:1px solid var(--line)}
+.hxnote{padding:.5rem 0;border-top:1px solid var(--line)}
+.hxnote p{margin:.25rem 0 0}
+.hxpanel .tag{display:inline-block;font-size:.8rem;padding:.05rem .45rem;border:1px solid var(--line2);border-radius:999px;color:var(--muted)}
+.hxempty{max-width:44rem}
+@media (max-width:980px){
+  .hxstage{--hxpw:0px}
+  .hxpanel{top:auto;left:0;width:auto;height:min(46%,24rem);border-left:0;border-top:1px solid var(--line);border-radius:14px 14px 0 0;box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+  .hxhud.tl{right:.75rem;top:4.2rem}
+  .hxhud.bar{right:.75rem}
+}
+/* tokens (bands, armies, NPCs): a disc in the token's colour with initials; hidden from players: dashed, paler */
+.hxmap .tok circle{fill:var(--c);stroke:#f3ecd9;stroke-width:.06}
+.hxmap .tok .ti{font:700 .3px var(--body);fill:#fff;text-anchor:middle}
+.hxmap .tok.hid circle{fill-opacity:.6;stroke-dasharray:.1 .07}
+.hxnote p{white-space:pre-line}
+
+/* ---------- the Ref's Map (variant B, owner's pick 2026-11-14): the day across the top, the step's panel beside the map, the tools
+   floating on its left, Edit map at the bottom left, a card over a tapped hex. --hxtop (the strip), --hxpb (a bottom sheet) and
+   --hxpr (a side panel) are measured by AFTER.rmap. The floating pieces keep the map HUD's own dark palette in every theme. ---------- */
+.hxb{--hxtop:0px;--hxpb:0px;--hxpr:var(--hxpw)}
+.hxb .hxpanel{top:var(--hxtop)}
+.hxb .hxload{top:var(--hxtop)}
+.hxday{position:absolute;z-index:4;top:0;left:0;right:0;display:flex;align-items:center;gap:.4rem .75rem;padding:.45rem .6rem .45rem .9rem;background:var(--panel);border-bottom:1px solid var(--line);color:var(--text);touch-action:pan-x;user-select:none}
+.hxday-h{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem .6rem;min-width:0;flex:0 1 auto}
+.hxday-t{display:inline-flex;align-items:baseline;gap:.1rem .5rem;flex-wrap:wrap;min-width:0}
+.hxday-t svg{align-self:center;flex:none;color:var(--scene,var(--text))}
+.hxday-t b{font:600 1.15rem/1.2 var(--display);white-space:nowrap}
+.hxday-t small{font-size:.9rem;color:var(--muted);white-space:nowrap}
+/* the status line under the page already says the place, the day and the pace (owner, 2026-11-20: nothing said twice);
+   full screen covers the line, so there the map's own head comes back */
+:root:not(.hxfs) .hxday-t.dup,:root:not(.hxfs) .hxhud .hxchip.dup{display:none} /* the day chip repeats the status line (owner, 2026-11-20): full screen only */
+:root:not(.hxfs) .hxstage[data-panel=open] .hxhud .hxchip.rdup{display:none} /* the route chip repeats the panel's Route line: shown in full screen, or when the side panel is closed */
+:root:not(.hxfs) .hxday-h:not(:has(>:not(.dup))){display:none} /* nothing left in it (no Lost, no pace chip): no empty cell before the rail */
+.hxday .hxchip{background:none;color:var(--text);border-color:var(--line2);padding:.3rem .7rem}
+.hxday .hxchip.bad{color:var(--harm,var(--danger));border-color:currentColor;font-weight:700}
+.hxday .jr-rail{position:relative;flex:1 1 auto;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0;border:0;padding:0;gap:2px}
+.hxday .jr-rail::-webkit-scrollbar{display:none}
+.hxday .jr-rail span{display:inline-flex;align-items:center;min-height:44px;padding:0 .8rem;font-size:.95rem;border:2px solid transparent;white-space:nowrap}
+.hxday .jr-rail span.done::before{color:var(--good);margin-right:.2rem}
+.hxday .jr-rail span.cur{border-color:var(--scene,var(--text))}
+.hxday-x{display:flex;gap:.35rem;margin-left:auto;flex:none}
+.hxday-x button{min-width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:10px;background:none;color:var(--text);cursor:pointer}
+.hxday-x button:hover{border-color:var(--text)}
+.hxday-x button[aria-pressed=true]{background:var(--panel2,transparent);box-shadow:inset 0 0 0 1px var(--text)}
+.hxday-x button:focus-visible{outline:2px solid var(--sel,var(--text));outline-offset:2px}
+.hxvt{position:absolute;z-index:3;left:.75rem;top:calc(var(--hxtop) + .75rem);display:flex;flex-direction:column;gap:.5rem}
+.hxvt .hxtools{flex-direction:column}
+.hxvt .hxtools button{width:48px;height:48px;min-width:48px;padding:0;font-size:1.3rem}
+.hxvt .hxtools button+button{border-left:0;border-top:1px solid rgba(239,230,207,.12)}
+.hxvt .hxtools button[aria-expanded=true]{background:#efe6cf;color:#141414}
+.hxvt svg{width:22px;height:22px}
+.hxvt.row,.hxvt.row .hxtools{flex-direction:row}
+.hxvt.row .hxtools button+button{border-top:0;border-left:1px solid rgba(239,230,207,.12)}
+.hxeditb{position:absolute;z-index:3;left:.75rem;bottom:calc(var(--hxpb) + .75rem);display:inline-flex;align-items:center;gap:.5rem;min-height:48px;padding:0 1rem;border-radius:12px;
+  background:rgba(16,15,14,.92);border:1px solid rgba(239,230,207,.25);color:#efe6cf;font:700 1rem var(--body);cursor:pointer}
+.hxeditb:hover{background:rgba(44,40,36,.96)}
+.hxeditb:focus-visible,.hb:focus-visible,.hxhc-x:focus-visible,.hxpl-n:focus-visible{outline:2px solid #efe6cf;outline-offset:2px}
+/* the hex card, the places list, the fog brush bar */
+.hxhc,.hxplaces,.hxfogbar{background:rgba(16,15,14,.97);color:#efe6cf;border:1px solid rgba(239,230,207,.3);border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.45);font-size:.95rem;line-height:1.35}
+.hxhc{position:absolute;left:0;top:0;z-index:5;width:min(19.5rem,calc(100% - 1.5rem));user-select:text;-webkit-user-select:text;touch-action:pan-y}
+.hxhc-b{position:relative;overflow:auto;padding:.7rem .85rem .8rem;overscroll-behavior:contain}
+.hxhc::after{content:"";position:absolute;left:var(--ax,50%);bottom:-9px;width:16px;height:16px;background:rgb(16,15,14);border-right:1px solid rgba(239,230,207,.3);border-bottom:1px solid rgba(239,230,207,.3);transform:translateX(-50%) rotate(45deg)}
+.hxhc.below::after{bottom:auto;top:-9px;transform:translateX(-50%) rotate(225deg)}
+.hxhc h4,.hxplaces h4{margin:0;font:600 1.1rem/1.25 var(--display);padding-right:2.8rem}
+.hxhc .m,.hxplaces .m,.hxfogbar .m{color:#cfc6b3;font:400 .9rem var(--body)}
+.hxhc-x{position:absolute;top:.25rem;right:.25rem;width:44px;height:44px;border:0;border-radius:10px;background:none;color:#efe6cf;font-size:1.1rem;cursor:pointer}
+.hxhc-x:hover{background:rgba(239,230,207,.12)}
+.hxhc .st,.hxplaces .st{display:flex;align-items:center;gap:.45rem;margin:.4rem 0 0}
+.hxhc .dot,.hxplaces .dot{flex:none;width:.7rem;height:.7rem;border-radius:50%;border:2px solid #cfc6b3}
+.hxhc .dot.f,.hxplaces .dot.f{background:#cfc6b3}
+.hxhc .r{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem}
+.hb{min-height:44px;padding:0 .8rem;border-radius:10px;border:1px solid rgba(239,230,207,.45);background:none;color:#efe6cf;font:700 .95rem var(--body);display:inline-flex;align-items:center;gap:.4rem;cursor:pointer}
+.hb:hover{background:rgba(239,230,207,.12)}
+.hb svg{width:18px;height:18px}
+.hxhc .pl{margin-top:.6rem;padding-top:.55rem;border-top:1px solid rgba(239,230,207,.18)}
+.hxhc .hxnote{border-top:1px solid rgba(239,230,207,.18)}
+.hxhc .hxnote p{margin:.3rem 0 0;white-space:pre-line}
+.hxhc .tag{display:inline-block;font-size:.875rem;padding:0 .45rem;border:1px solid rgba(239,230,207,.4);border-radius:999px;color:#cfc6b3}
+.hxhc .hint{margin:.55rem 0 0}
+.hxplaces{position:absolute;z-index:5;left:calc(.75rem + 48px + .6rem);top:calc(var(--hxtop) + .75rem);width:min(23rem,calc(100% - var(--hxpr) - 48px - 2.5rem));
+  max-height:calc(100% - var(--hxtop) - var(--hxpb) - 1.5rem);overflow:auto;padding:.7rem .85rem .5rem;position:absolute;user-select:text;-webkit-user-select:text;touch-action:pan-y;overscroll-behavior:contain}
+.hxpop-h{position:relative;display:flex;align-items:center;min-height:36px}
+.hxpop-h .hxhc-x{top:-.4rem;right:-.5rem}
+.hxpl-r{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.1rem .6rem;padding:.45rem 0;border-top:1px solid rgba(239,230,207,.18)}
+.hxpl-r:first-of-type{margin-top:.4rem}
+.hxpl-n{grid-row:span 2;display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;min-height:44px;justify-content:center;border:0;background:none;color:#efe6cf;font:inherit;text-align:left;cursor:pointer;padding:.15rem .3rem;margin-left:-.3rem;border-radius:8px}
+.hxpl-n:hover{background:rgba(239,230,207,.1)}
+.hxpl-n b{text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(239,230,207,.45)}
+.hxplaces .st{margin:0;font-size:.9rem;justify-self:end}
+.hxplaces .hb{justify-self:end}
+.hxfogbar{position:absolute;z-index:3;top:calc(var(--hxtop) + .75rem);left:calc(.75rem + 48px + .6rem);right:calc(var(--hxpr) + .75rem);display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .8rem;padding:.4rem .45rem .4rem .9rem}
+.hxfogbar span:not(.m){flex:1 1 16rem}
+.hxfogbar .hb{margin-left:auto}
+.hxvt.row~.hxfogbar,.hxvt.row~.hxplaces{left:.75rem;top:calc(var(--hxtop) + .75rem + 48px + .6rem)}
+.hxvt.row~.hxplaces{width:min(23rem,calc(100% - 1.5rem))}
+.hxb[data-panel=closed]{--hxpr:0px}
+@media (max-width:980px){
+  .hxb .hxpanel{top:auto}
+  .hxday{flex-wrap:wrap}
+  .hxday .jr-rail{order:3;flex-basis:100%}
+  .hxb[data-jr-tall][data-panel=open] .hxvt{display:none}
+}
+.hxhc.side::after{display:none}

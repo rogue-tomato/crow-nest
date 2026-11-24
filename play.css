@@ -1,0 +1,424 @@
+/* CROW NEST — the table stage, the vitals strip and the shell changes of the 2026-11-11 UX redesign (play.js).
+   Loaded last. Site tokens only: charcoal, chalk, red for harm. New text is never below 14 px. */
+
+/* ---------- Ref: the dungeon stage ---------- */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(18rem,23rem);gap:1.25rem;align-items:start}
+.st-main,.st-side{min-width:0}
+.st-side{display:flex;flex-direction:column;gap:1.25rem}
+@container (max-width:54em){.stage{grid-template-columns:1fr}}
+.st-card{padding:1.25rem 1.4rem 1.4rem}
+.st-h{display:flex;align-items:center;gap:.5rem .75rem;flex-wrap:wrap;margin-bottom:1rem}
+.st-h h2{font-size:1.55rem;letter-spacing:.01em}
+/* State is read, not pressed: a status tag is text with a dot, never a pill that looks like a button (iteration 3) */
+.st-tag{display:inline-flex;align-items:center;gap:.4rem;font-size:max(14px,.8rem);font-weight:700;letter-spacing:.02em;color:var(--muted);white-space:nowrap}
+.st-tag::before{content:'';width:.55rem;height:.55rem;border-radius:50%;border:2px solid currentColor;flex:none}
+.st-tag.on{color:var(--text)}.st-tag.on::before{background:currentColor}
+.st-tag.bad{color:var(--bad)}.st-tag.bad::before{background:currentColor;border-color:currentColor}
+.st-sum{margin-left:auto;display:inline-flex;align-items:center;gap:.6rem;border:0;background:none;color:var(--muted);min-height:44px;padding:0 .25rem;font-size:.95rem;text-align:right}
+.st-sum i{font-style:normal;font-weight:700;color:var(--text);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--faint)}
+.st-sum:hover i{text-decoration-color:var(--text)}
+.st-lead{margin:0 0 1rem}
+.st-set{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.25rem;margin:0 0 1rem;padding:.8rem 1rem;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+.st-set label{display:inline-flex;align-items:center;gap:.5rem}
+.st-set .st-fam{flex-basis:100%;margin:-.35rem 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1rem} /* under Monsters here: the family is the place's (journey.js famNoteHTML) */
+.st-fam p{margin:0;flex:1 1 22rem}.st-fam .btn{min-height:44px}
+.st-en{flex-basis:100%;margin:0;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.st-en b{font-family:var(--num);font-size:1.15rem}
+.st-en .btn{margin-left:auto}
+.st-clock{display:flex;flex-direction:column;gap:.7rem;margin:.25rem 0 1.2rem}
+.st-clock .clock{font-size:clamp(3.4rem,10cqw,5.6rem);letter-spacing:-.02em}
+.st-bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.st-bar i{display:block;height:100%;background:var(--text)}
+.st-acts{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.st-go{min-width:9.5rem;min-height:52px;font-size:1.05rem}
+.st-who{margin-top:1rem;padding:.8rem 1rem;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+.st-who .st-add{border-top:0;padding-top:.5rem;margin-top:0}
+/* encounter result: stays until the Ref deals with it */
+.st-enc{margin-top:1rem;border:1px solid var(--line2);border-radius:var(--r);padding:.8rem 1rem;background:var(--panel)}
+.st-enc.miss{display:flex;align-items:center;gap:.6rem;color:var(--muted)}
+.st-enc.miss .msg{flex:1}
+.st-enc.hit{border-color:color-mix(in srgb,var(--danger) 55%,var(--line2));border-left:3px solid var(--danger);background:color-mix(in srgb,var(--danger) 8%,var(--panel2))}
+.st-ench{display:flex;align-items:baseline;gap:.4rem .6rem;flex-wrap:wrap}
+.st-ench b{font-size:1.1rem}
+.st-encw{margin:.5rem 0 .8rem;font-size:1.05rem}
+.st-endc .st-enc{margin:0 0 .9rem}
+/* fight tracker: one block per monster, its attacks at hand */
+.st-fight .st-end{margin-left:auto}
+.st-clk{display:inline-flex;align-items:center;gap:.35rem;flex-wrap:wrap}
+.st-grp{border-top:1px solid var(--line);padding:.8rem 0 .5rem}
+.st-fight .st-h+.st-grp{border-top:0;padding-top:0}
+.st-gh{display:flex;align-items:baseline;gap:.3rem .6rem;flex-wrap:wrap}
+.st-mon{display:grid;grid-template-columns:2.4rem minmax(3rem,1fr) 7rem 8.6rem 44px;align-items:center;gap:.6rem;padding:.25rem 0}
+.st-mon.down{color:var(--muted)}
+.st-mon.down .hp i{background:var(--line2)}
+.st-n{font-family:var(--num);font-weight:700;color:var(--muted)}
+.st-hp{font-family:var(--num);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}
+.st-mon form{flex-wrap:nowrap;gap:.4rem;justify-self:end}
+.st-mon input[type=number]{width:4.2rem;text-align:center}
+.st-mon .btn.sm{min-height:44px;min-width:3.4rem}
+.st-mon .xbtn{width:44px;height:44px}
+.st-add{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;border-top:1px solid var(--line);padding-top:.8rem;margin-top:.4rem}
+.st-add .btn.sm{min-width:44px;min-height:44px}
+@container (max-width:34em){.st-mon{grid-template-columns:2rem minmax(0,1fr) auto;row-gap:.2rem}.st-mon form{grid-column:1/3;justify-self:start}.st-mon .xbtn{grid-column:3}}
+/* after the fight / quick loot */
+.st-loot{display:grid;gap:.6rem;margin:.25rem 0 1.1rem}
+.st-lrow{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.st-lrow>.muted{min-width:6.5rem}
+.st-lrow .btn.sm{min-height:44px}
+.st-pool .st-loot{margin:.75rem 0 0}
+.st-poolf{margin-top:.6rem}
+.st-pool .pool{min-height:0}
+/* end of the turn: one open step */
+.st-steps{list-style:none;margin:0;padding:0}
+.st-steps>li{display:grid;grid-template-columns:1.9rem minmax(0,1fr);gap:.75rem;padding:.7rem 0;border-top:1px solid var(--line)}
+.st-steps>li:first-child{border-top:0;padding-top:0}
+.st-sn{width:1.9rem;height:1.9rem;border-radius:50%;border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;font:700 .9rem var(--num);color:var(--muted)}
+.st-steps .cur .st-sn{border-color:var(--text);color:var(--text)}
+.st-steps .done .st-sn{background:var(--ok);border-color:var(--ok);color:#111}
+.st-steps h3{font-family:var(--body);font-size:1.05rem;font-weight:700;line-height:1.9rem}
+.st-steps .next h3,.st-steps .done h3{color:var(--muted);font-weight:400}
+.st-steps .cur h3{margin-bottom:.4rem}
+.st-list{margin:.25rem 0 .9rem;padding-left:1.1rem}
+/* party at a glance */
+.st-party .ptile{padding:.65rem 0}
+.pt-top{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+.pt-light{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pt-row{display:flex;align-items:center;gap:.75rem;margin-top:.3rem;font-size:.9rem;color:var(--muted)}
+.pt-row .hp{flex:1;min-width:2.5rem;max-width:16rem;height:8px}
+.pt-row .pt-n:first-of-type{margin-right:auto}
+.pt-n{white-space:nowrap;font-family:var(--num);font-variant-numeric:lining-nums tabular-nums}
+.pt-n b{color:var(--text);font-family:var(--num)}
+.pt-n.bad b{color:var(--bad)}
+.pt-flags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.45rem}
+.pflag{font-size:max(14px,.8rem);font-weight:700;border:0;border-radius:6px;padding:.05rem .5rem;color:var(--muted);background:var(--panel2)} /* state: a tint, no outline */
+.pflag.bad{color:var(--bad);background:color-mix(in srgb,var(--danger) 26%,transparent)}
+:root[data-theme=light] .pflag.bad{background:color-mix(in srgb,var(--danger) 10%,transparent);color:color-mix(in srgb,var(--bad) 78%,#000)}
+
+/* ---------- Player: vitals strip on every crow tab ---------- */
+.hud{position:sticky;top:calc(var(--th,62px) + var(--tb,57px));z-index:20;margin:-1.25rem 0 .9rem;padding:.5rem 0 .55rem;background:var(--shell);border-bottom:1px solid var(--line)}
+/* two groups side by side: the numbers, and the one primary action of the strip (Take damage, bone), which never joins the grid */
+.hud-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem;align-items:stretch}
+.hud-stats{display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr 1.7fr 1.5fr;background:var(--panel2);border:1px solid color-mix(in srgb,var(--line) 85%,transparent);border-radius:var(--r);overflow:hidden;min-width:0}
+.hud-do{display:flex;gap:.5rem;align-items:stretch}
+.hud-c{position:relative;display:flex;flex-direction:column;justify-content:center;gap:0;padding:.3rem .8rem .45rem;box-shadow:1px 0 0 var(--line),0 1px 0 var(--line);min-width:0}
+.hud-c.hint{cursor:help}
+.hud-c .k{font-size:max(14px,.72rem);font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.hud-c .v{font-family:var(--num);font-size:1.3rem;font-weight:600;line-height:1.2;font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud-c .v small{font-size:.85rem;color:var(--muted);font-weight:600;margin-left:.15rem}
+.hud-c.lt .v{font-family:var(--body);font-size:1.05rem;line-height:1.5}
+.hud-c.bad{box-shadow:inset 0 3px 0 var(--danger),1px 0 0 var(--line),0 1px 0 var(--line)}.hud-c.bad .v{color:var(--bad)}
+.hud-c.warn{box-shadow:inset 0 3px 0 var(--line2),1px 0 0 var(--line),0 1px 0 var(--line)}
+.hud-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--line)}
+.hud-bar i{display:block;height:100%;background:var(--text)}
+.hud-c.bad .hud-bar i{background:var(--danger)}
+.hud-eff{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:.5rem;align-content:center}
+.hud-eff .k,.hud-eff .v{grid-column:1}
+.hud-eff .k{cursor:help}
+.hud-st{grid-column:2;grid-row:1/3;display:flex;gap:.3rem;align-items:center}
+.hud-st .st{width:40px;height:40px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--text);font:700 1.1rem/1 var(--body);display:inline-flex;align-items:center;justify-content:center}
+.hud-st .st:hover{border-color:var(--text)}
+.hud .bonus{font-family:var(--num);font-size:max(14px,.75rem);font-weight:800;color:var(--text);background:none;border:1px solid var(--line2);border-radius:6px;padding:0 .3rem;margin-left:.3rem;line-height:1.35;cursor:help;vertical-align:middle}
+/* Take damage is harm: solid blood in every scene; the lighter blood edge keeps it 3:1 against the dark strip */
+.hud-dmg.danger{border-width:2px}.hud-dmg.danger.solid{border:2px solid var(--bad)}
+.hud-dmg{min-height:52px;padding:0 1.5rem;white-space:nowrap;font-size:1.05rem;font-weight:800}
+.hud-pop{position:absolute;right:0;top:calc(100% - .2rem);z-index:5;width:min(33rem,100%);background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:.9rem 1rem;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.hud-pop .hud-pt{flex-basis:100%;font-weight:700}
+.hud-pop p{flex-basis:100%;margin:0}
+
+.hud-pop input[type=number]{width:5rem;font-size:1.2rem;text-align:center}
+/* tablet, or a laptop with large text: the numbers in two rows of three columns that line up; Take damage stays beside them */
+@container (max-width:54em){.hud-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* phone: Stamina, AD and Wounds (Speed and light join when something is wrong with them), Take damage on its own row; the arrow
+   opens the rest. The strip scrolls with the page. */
+@container (max-width:34em){
+  .hud{position:static;margin-top:-.5rem;padding:.4rem 0 .45rem}
+  .hud-grid{grid-template-columns:minmax(0,1fr);gap:.45rem}
+  .hud-c{padding-inline:.6rem}
+  .hud:not(.open) .hud-stats{display:flex;flex-wrap:wrap}
+  .hud:not(.open) .hud-c{flex:1 1 0}
+  .hud:not(.open) .hud-c.hopt:not(.bad):not(.warn),.hud:not(.open) .hud-eff{display:none}
+  .hud.open .hud-stats>.hud-c:nth-child(6){grid-column:span 2}
+  .hud.open .hud-eff{order:1;grid-column:1/-1}
+  .hud-dmg{flex:1;min-height:48px}
+  .hud .hud-more{display:block}
+}
+/* the sheet below the strip */
+.dmgbox .crl{gap:.6rem .75rem}
+.dmgbox .crl>.term{font-weight:700}
+
+/* ---------- shell ---------- */
+.tbadge{display:inline-flex;align-items:center;justify-content:center;min-width:1.35rem;height:1.35rem;margin-left:.4rem;padding:0 .3rem;border-radius:999px;background:var(--text);color:var(--panel);font:700 max(14px,.72rem)/1 var(--num);vertical-align:.1em}
+.phase-ro{display:inline-flex;align-items:center;gap:.4rem;min-height:36px;padding:0 .75rem;border:1px solid var(--line);border-radius:10px;color:var(--muted);font-weight:700;font-size:.95rem;white-space:nowrap}
+/* typed number fields (damage): no native spinner, no stepper buttons */
+input.stp-in[type=number]{appearance:textfield;-moz-appearance:textfield;font-family:var(--num);font-variant-numeric:lining-nums tabular-nums}
+input.stp-in::-webkit-inner-spin-button,input.stp-in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+/* the title bar keeps to one row on tablets: the clock chip drops its bar and the greed note */
+@media (max-width:900px){.dtchip .bar,.dtchip .small{display:none}}
+.linkbtn{border:0;background:none;padding:0;color:var(--text);font-weight:700;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--faint);min-height:32px}
+.linkbtn:hover{text-decoration-color:var(--text)}
+.sec-h .sec-link.linkbtn{font-size:.85rem}
+
+/* ---------- Actions: one card each, as on the rulebook's page (playerActionsHTML) ---------- */
+.abil-lead{margin:0 0 1.1rem}
+
+/* ---------- Home: continue first ---------- */
+/* the session just ended (app.js homeHTML): one calm line above the next thing to do */
+.home .hover{margin:0 0 1rem;padding:.75rem 1rem;border:1px solid var(--line2);border-radius:var(--r);background:var(--panel2);font-size:1.05rem;text-align:center}
+.home .hq{font-size:1.5rem;margin:.5rem 0 1rem;text-align:center}
+.hgo{width:100%;display:flex;align-items:center;gap:1rem;text-align:left;background:var(--accent);color:var(--accent-ink);border:0;border-radius:var(--r);padding:1.1rem 1.3rem;margin-bottom:1.5rem;font:inherit;transition:background-color var(--ease)}
+.hgo:hover{background:color-mix(in srgb,var(--accent) 86%,var(--panel))}
+.hgo>span{flex:1;display:flex;flex-direction:column;gap:.15rem;min-width:0}
+.hgo small{font-size:max(14px,.72rem);font-weight:800;letter-spacing:.09em;text-transform:uppercase;opacity:.7}
+.hgo b{font-family:var(--display);font-size:1.6rem;line-height:1.15}
+.hgo>span>span{font-size:.95rem;opacity:.85}
+.hgo i{font-style:normal;font-size:1.6rem;font-weight:700}
+.home .hprep{margin-top:0}
+/* the role switch, first on Home (owner, 2026-11-22): the current half ringed, never a bone fill (that is the one primary action below) */
+.hrole-sw{display:flex;gap:4px;padding:4px;margin:0 0 1.25rem;border:1px solid var(--line2);border-radius:var(--r-grp,12px);background:var(--panel2)}
+.hrole-sw button{flex:1;display:flex;align-items:center;justify-content:center;gap:.55rem;min-height:52px;border:2px solid transparent;border-radius:var(--r-ctl,10px);background:none;color:var(--muted);font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer}
+.hrole-sw svg{width:22px;height:22px;flex:none}
+.hrole-sw button[aria-pressed=true]{border-color:var(--text);color:var(--text);background:var(--panel)}
+.hrole-sw button:not([aria-pressed=true]):hover{color:var(--text);background:color-mix(in srgb,var(--text) 8%,transparent)}
+.hrole-sw button:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+.bdanger{display:flex;align-items:center;justify-content:flex-end;gap:.75rem;flex-wrap:wrap;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--line)}
+.st-greed{margin:0}
+.list-links a i.fn{font-style:normal;min-width:0}
+.list-links mark{background:none;color:inherit;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.st-clk #bigclock{font-family:var(--num);font-variant-numeric:lining-nums tabular-nums}
+.st-left{margin:.9rem 0 0;padding-top:.7rem;border-top:1px solid var(--line)}
+.st-nd{margin-left:auto}
+
+/* ================= iteration 2: one workspace bar =================
+   who I play · three views · (space) · where the party is · clock · utilities. No bottom navigation on tablets and laptops;
+   on phones the views, Search and Menu sit at the bottom, in thumb reach. */
+/* the bar itself (cells, Who, Table, the steps of fitBar): topbar.css */
+.vbtn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:0;background:none;color:#a6a39e;border-radius:10px;padding:.3rem .85rem;min-height:44px;font-weight:700;white-space:nowrap;transition:background-color var(--ease),color var(--ease)}
+.vbtn svg{width:20px;height:20px;flex:none}
+.vbtn:hover{background:#1c1c1c;color:#f4f2ee}
+.vbtn[aria-current=page]{color:#f4f2ee;background:#1c1c1c;box-shadow:inset 0 -2px 0 var(--barink)}
+.vbtn.jr-dot::after{content:'';position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--barink)}
+/* the two menus of the bar */
+.wsmenu{position:fixed;top:calc(var(--th,56px) + .3rem);right:.75rem;z-index:45;width:min(22rem,calc(100vw - 1rem));max-height:calc(100dvh - var(--th,56px) - 1.5rem);overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);box-shadow:var(--shadow);padding:.35rem}
+.wsmenu.who{right:auto}
+.wsmenu[hidden]{display:none} /* the who menu shares the class name .who with Home's role picker (display:grid), which outranked [hidden] */
+.wsmenu h3{font:800 max(14px,.72rem)/1.2 var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:.6rem .7rem .25rem}
+.mrow{width:100%;text-align:left;border:0;background:none;color:var(--text);border-radius:10px;padding:.5rem .7rem;min-height:48px;display:flex;align-items:center;font:inherit}
+.mrow>span{display:flex;flex-direction:column;min-width:0}
+.mrow b{font-weight:700}
+.mrow>span>span{font-size:.85rem;color:var(--muted)}
+.mrow:hover,.mrow:focus-visible{background:var(--panel2)}
+.mrow[aria-current=true]{box-shadow:inset 3px 0 0 var(--text);background:var(--panel2)}
+/* the section row under the bar: quieter than the views above it */
+#tabs{padding:.15rem .75rem 0}
+#tabs .tl button,#tabs .tl button[aria-selected=true]{padding:.45rem .9rem;font-size:.95rem;min-height:40px}
+/* no bottom bar on tablets and laptops */
+#nav{display:none}
+main{padding-bottom:2.5rem}
+#toast{bottom:1.5rem}
+/* phone layout (a narrow window, or large text on a tablet): the views, Search and Menu move to the bottom */
+:root.bar-xs #nav{display:flex;align-items:stretch;gap:0;padding:0 0 env(safe-area-inset-bottom)}
+:root.bar-xs #nav .spacer{display:none}
+:root.bar-xs #nav .vbtn{flex:1 1 0;min-width:0;flex-direction:column;gap:.15rem;border-radius:0;min-height:58px;padding:.4rem 0 .35rem;font-size:14px;line-height:1.1}
+:root.bar-xs #nav .vbtn svg{width:22px;height:22px}
+:root.bar-xs #nav .vbtn[aria-current=page]{box-shadow:inset 0 2px 0 var(--barink)}
+:root.bar-xs #nav .vbtn .tbadge{position:absolute;top:4px;left:calc(50% + 6px);margin:0}
+:root.bar-xs main{padding-bottom:5rem}
+:root.bar-xs #toast{bottom:5.25rem}
+:root body.docked #toast{bottom:calc(var(--nb,0px) + var(--dockh,0px) + .6rem)}
+:root body.docked.toasting #toast{bottom:calc(var(--nb,0px) + var(--dockh,0px) - var(--toastbox,0px) - .1rem);--tl:var(--dockl,1rem);--tr:var(--dockr,1rem)}
+/* the band is a sticky strip at the top of the dock's own scroll, so the dock's content scrolls under it, not under the toast */
+body.docked.toasting .crs>.st-focus::before{content:'';display:block;position:sticky;top:-.7rem;z-index:2;height:calc(var(--toastbox,0px) + 1.1rem);margin:-.7rem -.85rem .4rem;background:inherit;border-radius:inherit}
+/* While a toast shows (body.toasting; --toasth: the band it takes at the bottom of the screen, app.js toastRoom) nothing that can
+   be tapped stays under it: the page, the side panel and the inventory get that much room at their end, the creature panel
+   beside the combat list ends above it. Beside an open side panel (wide screens) the toast centres over the page, not the panel. */
+body.toasting:not(.docked) main::after{content:'';display:block;height:var(--toasth,0px)} /* docked: the toast rides above the dock (dockMark) */
+body.toasting #panel .pb{padding-bottom:calc(2rem + var(--toasth,0px))}
+body.toasting .hxpanel::after{content:'';display:block;height:var(--toasth,0px)}
+body.toasting .invov-b{padding-bottom:max(6rem,calc(1rem + var(--toasth,0px)))}
+@media (min-width:1500px){body.panel-open #toast{--tr:32rem}}
+/* The toast itself (owner, 2026-11-17: at 768 px it squeezed into half the screen and Undo fell under the text, a heavy pill).
+   One calm bar: the message on the left, Undo on the right, both centred on one line; it takes the width it needs up to the room
+   it has (--tl/--tr: what it keeps clear of at each side), and only the message wraps when that is not enough. Corners as the
+   buttons'; Undo is a text button (underlined, 44 px target). Colours stay the inverted text/panel pair (AA in every theme). */
+#toast{left:var(--tl,1rem);right:var(--tr,1rem);margin-inline:auto;width:fit-content;max-width:min(48rem,calc(100vw - var(--tl,1rem) - var(--tr,1rem)));
+  transform:translateY(160%);display:flex;align-items:center;gap:.25rem .75rem;border-radius:10px;padding:.2rem .3rem .2rem 1rem;min-height:3rem;
+  font-weight:600;line-height:1.3;box-shadow:0 10px 28px -12px rgba(0,0,0,.7)}
+#toast.on{transform:none}
+#toast:not(:has(.tundo)){padding-right:1rem}
+#toast .tmsg{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;padding:.45rem 0}
+#toast .tundo{flex:none;margin:0;min-height:44px;min-width:44px;padding:0 .7rem;border:0;border-radius:8px;background:none;color:inherit;font:inherit;font-weight:800;
+  text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.22em;cursor:pointer}
+#toast .tundo:hover{background:color-mix(in srgb,currentColor 12%,transparent)}
+#toast .tundo:focus-visible{outline:2px solid currentColor;outline-offset:-3px}
+:root.bar-xs .wsmenu,:root.bar-xs .wsmenu.who{top:auto;left:.5rem!important;right:.5rem;bottom:calc(var(--nb,58px) + .5rem);width:auto;max-height:70dvh}
+
+/* ================= iteration 2: the stage without boxes; combat as a list plus one creature in focus ================= */
+.stage{grid-template-columns:minmax(0,1fr) minmax(17rem,21rem);gap:2.25rem}
+.st-card{padding:.25rem 0 0}
+.st-h{margin-bottom:1.1rem}
+.st-h h2{font-size:1.9rem}
+.st-side{border-left:1px solid var(--line);padding-left:1.75rem;gap:1.75rem}
+.st-party .sec-h{margin-bottom:.25rem}
+.st-pool .pool{border:0;background:none;padding:0;border-radius:0}
+@container (max-width:54em){.stage{grid-template-columns:1fr;gap:1.5rem}.st-side{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:1.25rem}}
+/* an encounter being prepared */
+.st-prep{margin-top:1.1rem;border:1px solid var(--line2);border-left:3px solid var(--text);border-radius:var(--r);padding:.85rem 1rem;background:var(--panel2)}
+.st-prepl{list-style:none;margin:.6rem 0 .85rem;padding:0;display:grid}
+.st-prepl li{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:48px;border-top:1px solid var(--line)}
+.st-prepl li:first-child{border-top:0}
+.st-prepl .stepper button{width:40px;height:40px}
+/* one encounter card (encounterHTML): who comes, a line each — the name, what it is, how many */
+.st-enc .st-prepl{margin:.55rem 0 .85rem}
+.enc-m{display:flex;flex-wrap:wrap;align-items:baseline;gap:.05rem .7rem;min-width:0}
+.enc-m .pname{font-weight:700}
+.st-enc .st-prepl b.enc-n,.st-enc.hit.now .st-prepl b.enc-n,.st-enc.hit.soon .st-prepl b.enc-n{color:var(--text)}
+.enc-n{font-family:var(--num);font-variant-numeric:lining-nums tabular-nums;font-size:1.2rem;white-space:nowrap;padding-right:.25rem}
+.st-enc .st-acts+.st-acts,.jr-follow{margin:.2rem 0 .6rem}
+.st-who{padding:.75rem 1rem .85rem}
+/* creature picker: names, not letters */
+.pk-h{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.25rem}
+.pk-h h3{font-size:1.2rem}
+.pk-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.75rem;align-items:center;border-top:1px solid var(--line);min-height:50px}
+.pk-row .btn{min-height:44px;min-width:4.2rem}
+.pk-find{margin-top:.6rem;min-height:44px}
+/* tracker */
+.crs{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;align-items:start}
+.cr{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(3rem,1fr) 4.4rem;align-items:center;gap:.8rem;width:100%;text-align:left;border:0;border-top:1px solid var(--line);border-radius:0;background:none;color:var(--text);padding:.45rem .7rem;min-height:48px;font:inherit;transition:background-color var(--ease)}
+.cr-list>.cr:first-child{border-top:0}
+.cr:hover{background:var(--panel2)}
+.cr[aria-pressed=true]{background:var(--panel2);box-shadow:inset 3px 0 0 var(--text)}
+.cr .hp{min-width:0;height:8px}
+.cr-n{font-family:var(--display);font-weight:700;font-size:1.12rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cr-hp{text-align:right;font-family:var(--num);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap;color:var(--muted)}
+.cr-hp b{color:var(--text)}
+.cr.down{color:var(--muted)}.cr.down .cr-n{text-decoration:line-through;text-decoration-thickness:1px}.cr.down .hp i{background:var(--line2)}
+.cr-add{padding:.8rem 0 0;border-top:1px solid var(--line)}
+.cr-none{margin:0 0 .75rem}
+.st-focus{border:1px solid var(--line2);border-radius:var(--r);background:var(--panel2);padding:1rem 1.15rem 1.1rem;scroll-margin:5rem}
+.fo-h{display:flex;align-items:center;gap:.25rem 1rem;flex-wrap:wrap;margin-bottom:.7rem}
+.fo-h h3{font-size:1.45rem;margin-right:auto}
+.fo-tog{display:none}
+.fo-down{color:var(--bad);font-weight:700}
+.fo-dmg label{display:block;font-weight:700;margin-bottom:.4rem}
+.fo-dmg .row{gap:.5rem}
+.fo-dmg input[type=number]{width:5.5rem;min-height:48px;font-size:1.25rem;text-align:center}
+.fo-dmg .btn{min-height:48px}
+.fo-dmg p{margin:.4rem 0 0}
+.fo-foot{margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;justify-content:space-between}
+/* room for two columns: the list on the left, the creature in focus on the right, both in view */
+/* Combat layout (iteration 3). The combat card measures itself, so the text size counts.
+   Room for two columns: the list beside the creature in focus, which stays in view down a long list.
+   Less: the creature in focus docks at the bottom of the screen (above the phone's bar) with its name, Stamina and the damage
+   field; attacks, traits and the rarer buttons open inside the dock. No dialog, no jump: a tap on a row swaps what the dock shows. */
+.st-fight{container:fight/inline-size}
+@container fight (min-width:40em){
+  .crs{grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:1.5rem}
+  .crs>.st-focus{position:sticky;top:calc(var(--th,62px) + var(--tb,57px) + .75rem);max-height:calc(100vh - var(--th,62px) - var(--tb,57px) - 1.5rem);overflow:auto;overscroll-behavior:contain}
+  body.toasting .crs>.st-focus{max-height:calc(100vh - var(--th,62px) - var(--tb,57px) - .75rem - max(.75rem,var(--toasth,0px)))}}
+@container fight (max-width:39.99em){
+  .crs{gap:.75rem}
+  .crs>.st-focus{position:sticky;bottom:var(--nb,0px);z-index:6;margin:0 -.35rem;padding:.7rem .85rem .8rem;border-radius:14px 14px 0 0;border-bottom:0;
+    box-shadow:0 -10px 28px rgba(0,0,0,.55);max-height:min(50vh,28rem);overflow:auto;overscroll-behavior:contain}
+  .crs>.st-focus .fo-h{margin-bottom:.45rem;gap:.1rem .75rem}
+  .crs>.st-focus .fo-h h3{font-size:1.2rem}
+  .crs>.st-focus .fo-tog{display:inline-flex;min-height:40px}
+  .crs>.st-focus .fo-dmg label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .crs>.st-focus .fo-dmg .row{flex-wrap:nowrap}
+  .crs>.st-focus .fo-dmg .btn.primary{flex:1 1 auto}
+  /* closed dock: the name, Stamina and AD on one line, the damage field; the rest of the stat block opens inside it */
+  .crs>.st-focus:not(.open) :is(.sb>:not(.sb-vit,.fo-dmg),.sb-vit>:not(.t-st,.t-ad),.fo-foot,.fo-adn,.fo-heal){display:none}
+  .crs>.st-focus:not(.open) .sb{gap:.45rem}
+  .crs>.st-focus:not(.open) .sb-vit{display:flex;gap:.25rem 1.25rem;border:0;background:none;border-radius:0}
+  .crs>.st-focus:not(.open) .sb-vit .tile{flex-direction:row;align-items:baseline;gap:.4rem;padding:0;box-shadow:none}
+  .crs>.st-focus:not(.open) .sb-vit .tile .k{margin:0}
+  .crs>.st-focus:not(.open) .sb-vit .tile .v{font-size:1.1rem}
+  .crs>.st-focus.open .fo-dmg .row{flex-wrap:wrap}
+  .cr-add{padding-bottom:.25rem}}
+/* the list: the name and the number share the line, the Stamina bar runs under them — names stay whole at any text size and
+   in the narrow column beside the stat block ("Blood Creature A #12"); a very wide card puts the bar between them */
+.cr{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n hp" "bar bar";row-gap:.2rem;padding:.3rem .7rem .45rem;min-height:48px;line-height:1.25}
+.cr-n{grid-area:n}.cr-hp{grid-area:hp}.cr .hp{grid-area:bar;height:4px}
+@container fight (min-width:80em){
+  .cr{grid-template-columns:minmax(0,1.25fr) minmax(3rem,1fr) 4.4rem;grid-template-areas:"n bar hp";padding:.45rem .7rem}.cr .hp{height:8px}}
+
+/* ================= iteration 2: quick sheet, full sheet, the strip in two sizes ================= */
+/* the arrow that opens the rest of the strip on a phone */
+.hud-more{display:none;flex:none;min-width:48px;min-height:48px;border:1px solid var(--line2);border-radius:var(--r);background:var(--panel2);color:var(--text);font-size:1rem}
+.hud-more:hover{border-color:var(--text)}
+/* quick sheet: conditions in force and what is at hand, one line each */
+.quick{display:flex;flex-direction:column;gap:.2rem;margin:0 0 1.25rem;padding-bottom:.9rem;border-bottom:1px solid var(--line)}
+/* the situation line: one sentence on where the party is; combat gets the alarm colour, the rest stays quiet */
+.sit{margin:0 0 .35rem;font-size:.95rem;color:var(--muted)}
+.sit b{color:var(--text);font-weight:800}
+.sit-fight{color:var(--text)}.sit-fight b{color:var(--bad)}
+.quick>:is(.conds,.ready){position:relative;padding-left:7.2rem}
+.quick>*>.ql:first-child{position:absolute;left:0;top:0;height:44px;display:flex;align-items:center;margin:0}
+.quick>.ready>.btn{margin-left:auto}
+.conds,.ready{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;min-height:44px}
+.ql{font-size:max(14px,.72rem);font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-right:.25rem}
+a.ql{cursor:help}
+.conds .chip{min-height:36px;padding:.1rem .7rem;font-size:.9rem;gap:.45rem}
+.conds .chip i{font-style:normal;font-size:max(14px,.78rem);opacity:.7}
+.conds .chip:not(.on){background:none;border:1px dashed var(--line2);color:var(--text)}
+.rchip{display:inline-flex;align-items:center;border:1px solid var(--line2);background:var(--panel2);color:var(--text);border-radius:10px;padding:.15rem .75rem;min-height:40px;font-weight:700;font-size:.95rem}
+.rchip:hover{border-color:var(--text)}
+.rchip.lit{border-color:var(--text)}
+.ready>.btn{margin-left:auto}
+/* full sheet: flat sections, no cards inside cards */
+.fs-h{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.fs-h h2{font-size:1.9rem}
+.fs-h p{margin:.15rem 0 0}
+.fs{display:grid;grid-template-columns:minmax(13rem,18rem) minmax(0,1fr) minmax(0,1fr);gap:1.5rem 2rem;align-items:start;margin-bottom:1.5rem}
+.fs-wide{grid-column:1/-1;border-top:1px solid var(--line);padding-top:1.1rem}
+.fs-s .sec-h{margin-top:0;display:flex;align-items:baseline;gap:.75rem}
+.fs .conds+.conds{margin-top:.2rem}
+@container (max-width:52em){.fs{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fs-s:first-child{grid-column:1/-1}}
+@container (max-width:34em){.fs{grid-template-columns:1fr}}
+.fs .kpi .k{font-size:max(14px,.72rem)}
+.tbtn.primary:hover{color:var(--bar)}
+
+/* a cue: what the screen wants from you first, above a long management page (iteration 3) */
+.cue{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem;margin:0 0 1rem;padding:.7rem 1rem;border:1px solid var(--line2);border-left:3px solid var(--text);border-radius:var(--r);background:var(--panel2)}
+#xp-box{scroll-margin-top:calc(var(--th,62px) + var(--tb,57px) + .75rem)}
+
+/* Three levels of action (iteration 3): primary is filled, secondary is outlined, tertiary is underlined text.
+   A tertiary button keeps its 44 px target and gains a background on hover/focus; destructive tertiary is red text. */
+.btn.ghost{border-color:transparent;background:none;text-decoration:underline;text-decoration-color:var(--line2);text-decoration-thickness:1px;text-underline-offset:.28em;padding-inline:.25rem}
+.btn.ghost:hover,.btn.ghost:focus-visible{background:var(--panel2);border-color:transparent;text-decoration-color:currentColor}
+.btn.ghost.danger{color:var(--bad);text-decoration-color:color-mix(in srgb,var(--bad) 55%,transparent)}
+.btn.ghost.danger:hover{background:color-mix(in srgb,var(--danger) 18%,transparent);color:var(--bad)}
+:root[data-theme=light] .btn.ghost.danger:hover{background:color-mix(in srgb,var(--danger) 8%,transparent)}
+/* release fix: on a phone the Ref's “Back to the table” may shrink (ellipsis) instead of pushing the bar past the screen */
+:root.bar-xs #acts .tbtn{min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- one stat block (statblockHTML in app.js): the Bestiary, the side panel and the creature in focus in combat ---------- */
+.sb{display:grid;gap:.6rem;min-width:0}
+.sb>*{margin:0}
+.sb-id{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem}
+.sb-id .chip{font-size:max(14px,.8rem)}
+.sb-pw{margin-left:auto;color:var(--muted);font-size:.95rem;white-space:nowrap}
+.sb-pw b{color:var(--text);font-family:var(--num);font-variant-numeric:lining-nums tabular-nums;font-size:1.25rem;margin-left:.2rem}
+.sb .sb-tiles{grid-template-columns:repeat(auto-fit,minmax(5.2rem,1fr))}
+.sb .tile .k{font-size:max(14px,.72rem);margin-bottom:.2rem}
+.sb .tile .v{font-size:1.25rem}
+.sb .tile.down .v{color:var(--muted)}
+.sb-sub{display:block;font:500 max(14px,.78rem)/1.2 var(--body);color:var(--muted);margin-top:.15rem}
+.sb-desc{color:var(--muted)}
+details.sb-desc summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center;gap:.5rem;list-style:none;color:var(--text)}
+details.sb-desc summary::-webkit-details-marker{display:none}
+details.sb-desc summary::after{content:'+';margin-left:auto;color:var(--muted);font-weight:800}
+details.sb-desc[open] summary::after{content:'−'}
+details.sb-desc p{margin:0 0 .3rem}
+.sb .sb-h{font:800 max(14px,.72rem)/1.2 var(--body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:.45rem 0 -.25rem}
+.sb-atk .pr{margin:.35rem 0}
+.sb-tr .trait{margin:.25rem 0 .5rem}
+.sb-tr .sb-rr>p{margin:0}
+.sb-tr .sb-rr .pr{margin:.35rem 0 0}
+.sb-acts{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 .9rem}
+.sb .fo-dmg{margin:.15rem 0 .2rem}
+
+/* ---------- a Point of Interest on the stage (journey.js): the place's banner, road encounters, the 3-DT question ---------- */
+.st-poib{border-left-color:var(--scene)}
+.st-roadenc>.st-enc{margin-top:1rem}
+.st-poiask .st-encw{margin:.3rem 0 .5rem}
+.st-poisd{margin:.8rem 0 0}

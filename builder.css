@@ -1,0 +1,279 @@
+/* CROW NEST — the crow builder (owner-approved mockup A2, grid variant a, 2026-11-21; QA/2026-11-21-builder.md) and the
+   empty crow list. Two steps, each on one screen at 1440×900, 1024×768 and 768×1024: the step header, the step, the bar at the
+   bottom with Cancel and the step's one way on (Save lives only there). Only an inner region scrolls when real data cannot fit.
+   Bone fills only the one primary action; a pick is a ring, never a fill. Loads after session.css. Scoped to .b2 / data-area=build. */
+
+/* ---------- the page: one screen above the status line ---------- */
+:root[data-area=build] #main{padding:0 1rem;display:flex;flex-direction:column;height:calc(100dvh - var(--tbar,64px) - var(--nb,40px));min-height:0;overflow:hidden}
+:root[data-area=build] #main>.page{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:12px 0 0;margin:0}
+.b2{--g:20px;flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.b2 *{min-width:0}
+.b2 h2,.b2 h3{margin:0}
+.b2 .box{padding:16px 20px;border-radius:var(--r-card,14px);margin:0;overflow:visible}
+.b2 .sec-h{margin-bottom:12px;padding-bottom:8px}
+.b2 .btn{min-height:48px;white-space:nowrap}
+.b2 .btn svg,.b2-tert svg,.b2-empty .btn svg{width:20px;height:20px;flex:none}
+.b2 .btn.off{background:none;border:1px dashed var(--line2);color:var(--muted);cursor:not-allowed;box-shadow:none}
+.b2 .muted{color:var(--muted)}
+.b2-sp{flex:1 1 auto}
+.b2-stage{flex:1 1 auto;min-height:0;display:grid;gap:var(--g);align-content:start;overflow:auto;padding:2px} /* the ring of a picked card stays inside */
+/* tertiary: underlined text, no frame (Cancel, Change, ← Background, Add a portrait) */
+.b2-tert{display:inline-flex;align-items:center;gap:8px;border:0;background:none;padding:0 4px;min-height:44px;color:var(--text);font:700 1rem/1.2 var(--body);text-decoration:underline;text-decoration-color:var(--faint);text-underline-offset:4px;cursor:pointer}
+.b2-tert:hover{text-decoration-color:var(--text)}
+.b2-foot>.b2-tert[data-action=bcancel]{color:var(--muted)}
+.b2-foot>.b2-tert[data-action=bcancel]:hover{color:var(--text)}
+.b2-quiet{color:var(--muted);font-weight:400;font-size:max(14px,.85rem)}
+.b2-note{margin:0;color:var(--muted);font-size:max(14px,.85rem);line-height:1.4}
+
+/* ---------- the step header: done = green tick, current = ring + rule, future = dashed number ---------- */
+.b2-steps{flex:none;display:grid;grid-auto-columns:minmax(0,1fr);grid-auto-flow:column;border-bottom:1px solid var(--line);margin-bottom:12px}
+.b2-step{display:flex;align-items:center;gap:16px;min-height:52px;padding:0 16px 0 0;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;background:none;text-align:left;color:var(--muted);font:inherit;cursor:pointer;border-radius:0}
+.b2-step+.b2-step{padding-left:16px}
+.b2-step .n{flex:none;width:max(28px,1.6em);height:max(28px,1.6em);line-height:1;display:grid;place-items:center; /* grows with the text size: a fixed 28 px box let a 26 px digit sink below it */border:1px dashed var(--line2);border-radius:8px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--muted)}
+.b2-step .t{display:flex;flex-direction:column;min-width:0}
+.b2-step b{font-size:max(14px,.85rem);font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:inherit}
+.b2-step small{font-size:max(14px,.8rem);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b2-step:hover{color:var(--text)}
+.b2-step[aria-current=step]{color:var(--text);border-bottom-color:var(--text)}
+.b2-step[aria-current=step] .n{border:2px solid var(--text);color:var(--text)}
+.b2-step.ok{color:var(--text)}
+.b2-step.ok .n{border:2px solid var(--good);color:var(--good)}
+.b2-step.lock .n{border:2px solid var(--line2);color:var(--muted)}
+.b2-step[aria-disabled=true]{cursor:not-allowed}
+
+/* ---------- the bar at the bottom: Cancel at the left, the step's one primary at the right ---------- */
+.b2-foot{flex:none;display:flex;align-items:center;gap:16px;min-height:68px;margin:12px -1rem 0;padding:8px 1rem;background:var(--panel);border-top:1px solid var(--line)}
+.b2-foot .btn{min-height:52px;padding:0 24px;gap:10px;font-size:1.05rem}
+.b2-foot .btn.primary{min-width:12rem} /* Confirm and Next: one component, the same place (owner, 2026-11-21) */
+.b2-back{margin-right:8px}
+
+/* ---------- step 1 before Confirm: Roll + the book's 6×6 table | the background ---------- */
+.b2-pick{grid-template-columns:minmax(0,7fr) minmax(0,5fr);grid-template-rows:minmax(0,1fr);align-content:stretch;overflow:hidden}
+.b2-left{display:flex;flex-direction:column;gap:16px;min-height:0;overflow:auto}
+.b2-roll{display:flex;align-items:center;gap:16px;flex:none}
+.b2-roll>.btn{min-width:11rem;font-size:1.05rem}
+.b2-roll .res{font:700 1.4rem/1 var(--body);font-variant-numeric:lining-nums tabular-nums}
+.b2-roll .res small{display:block;font:400 max(14px,.8rem)/1.3 var(--body);color:var(--muted)}
+/* names centred both ways; a word never breaks (each word is one inline box), so a column is as wide as its longest word */
+.b2-t{display:grid;grid-template-columns:20px repeat(6,minmax(min-content,1fr));grid-template-rows:24px;grid-auto-rows:minmax(56px,84px);gap:6px;align-content:start;flex:0 1 auto}
+.b2-t .h{display:grid;place-items:center;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;font-size:max(14px,.9rem)}
+.b2-c{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:48px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);text-align:center;font:700 max(14px,.9rem)/1.25 var(--body);hyphens:none;-webkit-hyphens:none;overflow-wrap:normal;word-break:normal;cursor:pointer}
+.b2-c .w{display:inline-block;white-space:nowrap}
+.b2-c:hover{border-color:var(--text);background:color-mix(in srgb,var(--text) 6%,var(--panel2))}
+.b2-c:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+.b2-c[aria-pressed=true]{border-color:var(--sel);box-shadow:0 0 0 2px var(--sel);background:var(--panel2)}
+.b2-detail{display:flex;flex-direction:column;gap:10px;min-height:0;border:1px solid var(--line);border-radius:14px;background:var(--panel2);padding:16px 20px;overflow:auto}
+.b2-detail.on{border-color:var(--sel);box-shadow:0 0 0 2px var(--sel)}
+.b2-detail .hd{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
+.b2-detail .hd h2{font:700 1.7rem/1.1 var(--display);text-transform:none;letter-spacing:0}
+.b2-detail .hd .btn{min-height:48px;padding:0 20px}
+.b2-detail .meta{order:5;flex-basis:100%;display:flex;gap:16px;font-size:.95rem}
+.b2-detail .meta b{font-weight:700}
+.b2-detail .desc{margin:0;color:var(--muted)}
+.b2-lbl{display:block;font-size:max(14px,.75rem);font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.b2-detail .chips{display:flex;flex-wrap:wrap;gap:6px}
+.b2-detail .trait p{margin:6px 0 0;font-size:max(14px,.85rem);line-height:1.45}
+.b2-none{margin:auto;text-align:center;color:var(--muted);max-width:22rem}
+.b2-none b{display:block;font:700 1.4rem/1.2 var(--display);color:var(--text);margin-bottom:6px}
+.b2-code{flex:none;font:700 max(14px,.85rem)/1 var(--body);font-variant-numeric:lining-nums tabular-nums;padding:5px 8px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.b2-code.on{background:var(--text);color:var(--panel);border-color:var(--text)}
+/* gear before it is on a board: small art + the full name */
+.b2-gear{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 12px}
+.b2-gi{display:flex;align-items:center;gap:10px;min-height:40px;font-size:max(14px,.85rem);line-height:1.2}
+.b2-gi .inv-art{flex:none;width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:8px;background:var(--panel);padding:2px;overflow:hidden}
+.b2-gi .inv-art img,.b2-gi .inv-art svg{width:100%;height:100%;object-fit:contain}
+.b2-gx{color:var(--muted);font-style:italic}
+
+/* ---------- step 1 after Confirm: one-line summary, then characteristics + gold | the starting board ---------- */
+.b2-done{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+.b2-sum{grid-column:1/-1;display:flex;align-items:center;gap:16px;min-height:40px;padding:10px 20px!important}
+.b2-sum h2{font:700 1.5rem/1.1 var(--display);white-space:nowrap;flex:none;text-transform:none;letter-spacing:0}
+.b2-sum p{margin:0;color:var(--muted);flex:1 1 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b2-lock{flex:none;color:var(--muted);font-size:max(14px,.85rem)}
+.b2-col{display:flex;flex-direction:column;gap:20px;min-height:0}
+.b2-q{display:grid;grid-template-columns:8.5rem repeat(var(--n,2),minmax(0,1fr));gap:8px 16px;align-items:center}
+.b2-q+.b2-q{margin-top:8px}
+.b2-q .l{font-size:max(14px,.8rem);font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.b2-q.go .l{color:var(--text)}
+.b2-opt{min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 10px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);color:var(--text);font:700 1rem/1.2 var(--body);cursor:pointer}
+.b2-opt small{font-weight:400;color:var(--muted);font-size:max(14px,.8rem)}
+.b2-opt:hover{border-color:var(--text)}
+.b2-q.go .b2-opt{border-width:2px}
+.b2-opt[aria-pressed=true]{background:var(--panel2);border:2px solid var(--sel);box-shadow:0 0 0 2px var(--sel)}
+/* two stat groups: what the character is (A M S) and what every crow has (Stamina Effort Speed) */
+.b2-stats{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.b2-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+.b2-kpis .kpi{padding:8px 6px;box-shadow:1px 0 0 var(--line)}
+.b2-kpis .kpi.chr{box-shadow:inset 0 3px 0 var(--chr),1px 0 0 var(--line)}
+.b2-kpis .kpi .k{font-size:max(14px,.75rem);cursor:default}
+.b2-kpis .kpi .v{font-size:1.45rem}
+.b2-kpis .kpi.q .v{color:var(--faint)}
+.b2-gold{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.b2-gold>b{font-weight:700}
+.b2-gold .big{font:700 2rem/1 var(--body);font-variant-numeric:lining-nums tabular-nums}
+.b2-gold .big small{font-size:1rem;font-weight:400;color:var(--muted);margin-left:4px}
+.b2-gold .dice{font-size:max(14px,.85rem);color:var(--muted)}
+/* the board: hands + belt on one row, backpack 5 × 2; names never break inside a word */
+.b2-boardbox{overflow:auto}
+.b2-board .bboard{display:grid;grid-template-columns:auto auto;justify-content:start;gap:16px 28px}
+.b2-board .bboard .bsec:last-child{grid-column:1/-1}
+.b2-board .bsec h3{margin-bottom:4px;font-size:max(14px,.75rem)}
+.b2-board .btiles{--inv-cell:72px;display:grid;gap:10px 22px}
+.b2-board .bsec:nth-child(1) .btiles{grid-template-columns:repeat(2,var(--inv-cell));gap:10px 16px}
+.b2-board .bsec:nth-child(2) .btiles{grid-template-columns:repeat(4,var(--inv-cell));gap:10px 16px}
+.b2-board .bsec:nth-child(3) .btiles{grid-template-columns:repeat(5,var(--inv-cell))}
+.b2-board .inv-item-name{overflow-wrap:normal;word-break:normal;hyphens:manual;font-size:14px;line-height:1.25;height:2.5em;width:calc(100% + 18px);margin:0 -9px;text-align:center}
+.b2-board .bsec:nth-child(3) .inv-item-name{width:calc(100% + 22px);margin:0 -11px}
+.b2-boardbox .b2-note{margin-top:10px}
+
+/* ---------- step 2: the name + the two groups; portrait first; the village connection as one fieldset ---------- */
+.b2-det{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:16px}
+.b2-hero{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:var(--g);align-items:center;padding:12px 20px!important}
+.b2 input.b2-name{width:100%;height:56px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);padding:6px 14px;font:700 1.9rem/1.15 var(--display);color:var(--text)}
+.b2 input.b2-name::placeholder{color:var(--faint)}
+.b2 input.b2-name.go{border:2px solid var(--text)}
+.b2 input.b2-name:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+.b2-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+.b2 .fld{margin:0}
+.b2 .fld b{font-size:.95rem}
+.b2 .fld input{width:100%;height:46px;padding:0 14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel)}
+.b2-pic{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.b2-pic .row{gap:12px;margin-top:2px}
+.b2-pic .cav{flex:none}
+.b2-pic .picfile{position:relative}
+.b2-who{min-height:0}
+.b2-danger{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+.b2-danger .btn{min-height:44px}
+fieldset.b2-conn{margin:0;min-width:0;border:1px solid var(--line);padding:16px 20px;gap:12px}
+fieldset.b2-conn>legend.sec-h{float:left;width:100%;padding:0 0 8px;margin:0}
+fieldset.b2-conn>legend.sec-h+*{clear:both}
+/* the type chips and the chosen type's text: the shared block (chips.css, chipBox) */
+
+/* ---------- the empty crow list ---------- */
+.b2-empty{max-width:560px;margin:12vh auto 0;text-align:center;padding:32px 24px}
+.b2-empty>svg{width:48px;height:48px;color:var(--muted)}
+.b2-empty h2{font:700 1.8rem/1.2 var(--display);margin:16px 0 24px;text-transform:none;letter-spacing:0;border:0;padding:0}
+.b2-empty .acts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.b2-empty .btn{min-height:56px;font-size:1rem;flex-direction:row;gap:8px}
+.b2-empty .btn b{font-weight:700}
+
+/* the toast rises above the builder's bottom bar */
+:root[data-area=build] #toast{bottom:calc(var(--nb,40px) + var(--footh,64px) + 12px)}
+
+/* ---------- landscape tablet (1024) ---------- */
+@media (max-width:1300px){
+  .b2-pick{grid-template-columns:minmax(0,1fr) 20rem;gap:16px}
+  .b2-t{grid-template-columns:16px repeat(6,minmax(min-content,1fr));grid-auto-rows:minmax(52px,auto);gap:4px}
+  .b2-c{padding:5px 6px;font-size:14px;line-height:1.22}
+  .b2-detail{padding:12px 14px;gap:6px}
+  .b2-detail .hd h2{font-size:1.3rem}
+  .b2-detail .hd .btn{min-height:44px;padding:0 14px}
+  .b2-detail .desc{font-size:.9rem;line-height:1.35}
+  .b2-detail .chips{gap:4px}
+  .b2-detail .chips .chip{padding:.05rem .45rem}
+  .b2-detail .trait p{font-size:14px;line-height:1.4}
+  .b2-lbl{margin-bottom:3px}
+  .b2-gear{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px}
+  .b2-gi{min-height:30px;font-size:14px;gap:8px}
+  .b2-gi .inv-art{width:28px;height:28px;padding:1px}
+  .b2 .box{padding:14px 16px}
+  .b2-done{grid-template-columns:minmax(0,11fr) minmax(0,9fr)}
+  .b2-col{gap:12px}
+  .b2-q{grid-template-columns:repeat(var(--n,2),minmax(0,1fr))}
+  .b2-q .l{grid-column:1/-1}
+  .b2-gold .big{font-size:1.7rem}
+  .b2-board .btiles{--inv-cell:54px}
+  .b2-board .bsec:nth-child(3) .btiles{gap:8px 24px}
+  .b2-board .bboard{gap:10px 20px}
+  .b2-det{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+  .b2-who .b2-form{grid-template-columns:1fr}
+  .b2-form{gap:10px 12px}
+  fieldset.b2-conn{padding:14px 16px;gap:10px}
+  .b2-typebox{padding:10px 12px}
+  .b2-typebox .cd-chips{gap:5px}
+  .b2-typebox .cd-chip{padding:0 10px}
+  .b2-typebox .cd-chip[aria-checked=true]{padding:0 9px}
+  .b2-typebox .cd-desc{margin-top:8px;padding-top:8px;font-size:14px;line-height:1.4}
+  .b2-pic{margin-bottom:4px}
+  .b2-danger{padding-top:10px}
+}
+/* ---------- portrait tablet (768): everything stacks, still one screen ---------- */
+@media (max-width:900px){
+  .b2-pick{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:12px}
+  .b2-left{gap:10px;overflow:visible}
+  .b2-t{grid-template-columns:18px repeat(6,minmax(min-content,1fr));grid-auto-rows:minmax(44px,auto);gap:4px}
+  .b2-c{padding:3px 6px;line-height:1.2}
+  .b2-detail{padding:12px 16px;gap:6px}
+  .b2-detail .hd h2{font-size:1.5rem}
+  .b2-detail .meta{order:0;flex-basis:auto;margin-left:4px}
+  .b2-detail .rw{display:grid;grid-template-columns:9rem minmax(0,1fr);align-items:start;gap:12px}
+  .b2-detail .rw .b2-lbl{margin:8px 0 0}
+  .b2-gear{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 12px}
+  .b2-done,.b2-det{grid-template-columns:1fr;grid-template-rows:auto}
+  .b2-done{gap:10px}
+  .b2-done .b2-col{gap:10px}
+  .b2-sum{padding:6px 20px!important}
+  .b2-boardbox>.b2-bh{display:none} /* the board speaks for itself; a crow in play keeps “change it in Inventory” */
+  .b2-q{grid-template-columns:8rem repeat(var(--n,2),minmax(0,1fr))}
+  .b2-q .l{grid-column:auto}
+  .b2-opt{min-height:48px}
+  .b2-gold{flex-wrap:nowrap;gap:12px}
+  .b2-board .btiles{--inv-cell:52px}
+  .b2-board .bsec:nth-child(-n+2) .btiles{gap:6px 18px}
+  .b2-board .bsec:nth-child(3) .btiles{gap:6px 28px}
+  .b2-board .bsec:nth-child(3) .inv-item-name{width:calc(100% + 26px);margin:0 -13px}
+  .b2-board .bboard{gap:8px 28px}
+  .b2-det{gap:12px}
+  .b2-hero{grid-template-columns:1fr;gap:12px}
+  .b2-who>.sec-h{display:none}
+  .b2-who .b2-form{grid-template-columns:1fr 1fr}
+  .b2-who{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px}
+  .b2-who>.b2-pic{grid-column:1;margin-bottom:8px}
+  .b2-who>.b2-danger{grid-column:2;grid-row:1;align-self:center;margin:0 0 8px;padding:0;border:0}
+  .b2-who>.b2-form{grid-column:1/-1}
+}
+/* phones: no fixed screen; the page scrolls and the bottom bar sticks above the status line */
+@media (max-width:760px){
+  :root[data-area=build] #main{height:auto;overflow:visible;display:block;padding:0 .5rem calc(1rem + var(--nb,0px))}
+  .b2-stage{overflow:visible}
+  .b2-pick,.b2-done,.b2-det{grid-template-columns:1fr;grid-template-rows:auto}
+  .b2-foot{position:sticky;bottom:var(--nb,40px);z-index:20}
+  .b2-sum{flex-wrap:wrap}.b2-sum p{flex-basis:100%;order:5;white-space:normal}
+  .b2-hero{grid-template-columns:1fr}
+  .b2-stats{grid-template-columns:1fr}
+  .b2-empty .acts{grid-template-columns:1fr}
+}
+
+/* ---------- back to top (totop.js): bottom-right above the status line; the chest is bottom-left, the toast bottom-centre ---------- */
+.totop{position:fixed;right:calc(1rem + env(safe-area-inset-right));bottom:calc(var(--nb,40px) + 16px);z-index:35;width:56px;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:0;border:1px solid var(--line2);border-radius:12px;background:var(--panel2);color:var(--text);box-shadow:var(--shadow);font:700 14px/1 var(--body);cursor:pointer}
+.totop[hidden]{display:none}
+.totop{width:52px;height:52px}.totop svg{width:24px;height:24px} /* icon only (owner, 2026-11-21): ⤒, named “Back to top” */
+.totop:hover{border-color:var(--text)}
+.totop:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+body.docked .totop{bottom:calc(var(--nb,40px) + var(--dockh,0px) + 12px)}
+body.panel-open .totop{right:calc(min(31rem,100vw) + 1rem)}
+body.inv-open .totop{display:none}
+body.totop-on:not(.has-fab) #toast{--tr:calc(52px + 1.75rem);--tl:calc(52px + 1.75rem)}
+#main:focus{outline:none}
+:root[data-area=build] body.toasting main::after{content:none} /* the toast rides above the bottom bar; no band under the page */
+/* --- after the first look at the real screens --- */
+.b2 h2:not(.sec-h){border:0;padding:0}
+.b2-step.ok[aria-current=step]:not(.lock) .n{border-color:var(--text);color:var(--text)}
+.b2-det>.b2-col{overflow:auto} /* the longest connection types (Smarty Pants, Rival) scroll inside their box, not the page */
+@media (max-width:1300px) and (min-width:901px){
+  .b2-c{padding:4px 4px}
+  .b2-detail{gap:5px}
+  .b2-gi{min-height:28px}
+  .b2-steps{margin-bottom:10px}
+}
+@media (max-width:900px){
+  .b2-detail .hd .meta{order:1}.b2-detail .hd .b2-sp{order:2}.b2-detail .hd .btn{order:3}
+}
+.b2-step{min-height:44px}
+@media (max-width:1300px) and (min-width:901px){
+  .b2-det{gap:12px}
+  .b2-hero{padding:10px 16px!important}
+  .b2 input.b2-name{height:52px;font-size:1.7rem}
+  fieldset.b2-conn{gap:8px}
+  .b2-conn .b2-form{margin-bottom:8px}
+}

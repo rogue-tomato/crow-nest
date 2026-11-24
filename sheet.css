@@ -1,0 +1,158 @@
+/* CROW NEST — one level of navigation (owner, 2026-11-12): the player's Sheet (playerSheetHTML), the Inventory overlay
+   (openInventory / closeInventory), Companions. The containers are temporary until the owner picks one; the content does not
+   depend on them. Colours keep their jobs (visual.css): sulphur = waiting on you, blood = harm; each with a second cue. */
+
+/* ---------- Inventory: one overlay over any screen; the screen under it keeps its scroll ---------- */
+.invov{position:fixed;left:0;right:0;top:var(--th,0px);bottom:0;z-index:35;background:var(--shell);display:flex;flex-direction:column}
+.invov[hidden]{display:none}
+:root.bar-xs .invov{bottom:var(--nb,58px)}
+body.inv-open{overflow:hidden}
+.invov-h{display:flex;align-items:center;gap:1rem;width:100%;max-width:1500px;margin:0 auto;padding:.45rem 1rem;border-bottom:1px solid var(--line)}
+.invov-h h2{margin:0;font-size:1.3rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.invov-h h2 .muted{font-weight:600}
+.invov-x{margin-left:auto;width:48px;height:48px;flex:none;font-size:1.1rem}
+.invov-b{flex:1;overflow:auto;overscroll-behavior:contain;padding:1rem 1rem 6rem}
+.invov-b>.inventory{max-width:calc(1500px - 2rem);margin:0 auto}
+/* content that fits takes no room under it, so the overlay does not scroll for an empty band (app.js invRoom, owner 2026-11-24) */
+.invov-b.fits{padding-bottom:0}
+@media (max-width:640px){.invov-b{padding:.75rem .5rem 6rem}.invov-h{padding:.35rem .5rem .35rem .75rem}}
+
+/* ---------- Inventory: a round button at the bottom left, over every crow screen (owner's 'variant 2', 2026-11-12) ----------
+   Chrome, not the screen's primary. It clears the iPhone home bar, sits above the phone's bottom bar, and the toast and the page's
+   last lines keep out of its way.
+   Colours (owner, 2026-11-16, "like iOS"): closed, a sulphur disc with a dark backpack; the party loot count waits on it as a red
+   chip with a white number (the number is the cue besides colour). Open: blood with ✕ — the same place closes it.
+   On bone the sulphur token is a dark olive (text colour), so the disc there is a deeper yellow fill with an olive rim. */
+.invfab{--fab:64px;position:fixed;z-index:40;left:calc(1rem + env(safe-area-inset-left));bottom:calc(1rem + env(safe-area-inset-bottom));width:var(--fab);height:var(--fab);border-radius:50%;
+  border:1.5px solid var(--line2);background:var(--panel2);color:var(--text);box-shadow:0 10px 26px -10px rgba(0,0,0,.75),0 2px 6px rgba(0,0,0,.35);display:grid;place-items:center;cursor:pointer;padding:0;touch-action:manipulation}
+.invfab[hidden]{display:none}
+/* Closed: a quiet dark disc with a bronze tint (owner's pick B, 2026-11-18), a bronze ring and a bronze iron-banded chest (owner, 2026-11-18: "like Take damage" — the colour
+   is the line and the drawing, not a fill). Open: the red ✕ below. */
+.invfab{--fab-metal:#c8935a;--fab-disc:#33261a;background:var(--fab-disc);border:2px solid var(--fab-metal);color:var(--fab-metal)}
+.invfab:not(.open):hover{background:color-mix(in srgb,var(--fab-metal) 16%,var(--fab-disc));border-color:var(--fab-metal)}
+/* Light theme (owner's pick D, 2026-11-18): a bronze-tinted disc with a dark-bronze ring and chest. */
+:root[data-theme=light] .invfab{--fab-metal:#6e461c;--fab-disc:#e3cdae}
+:root[data-theme=light] .invfab:not(.open):hover{background:#dcc19b}
+.invfab.open{background:var(--danger);border:2px solid var(--bad);color:#fff}
+.invfab.open svg{width:28px;height:28px}
+.invfab svg{width:30px;height:30px}
+.invfab.open:hover{border-color:var(--text)}
+.invfab:focus-visible{outline:3px solid var(--text);outline-offset:3px}
+.invfab .tbadge{position:absolute;top:-.25rem;right:-.25rem;margin:0;min-width:1.65rem;height:1.65rem;font-size:max(14px,.8rem);font-weight:800;border:2px solid var(--shell)}
+:root.bar-xs .invfab{left:calc(.75rem + env(safe-area-inset-left));bottom:calc(var(--nb,58px) + .75rem)}
+/* the last lines of a page scroll clear of it */
+body.has-fab main{padding-bottom:calc(64px + 2.5rem + env(safe-area-inset-bottom))}
+:root.bar-xs body.has-fab main{padding-bottom:calc(var(--nb,58px) + 64px + 2rem)}
+/* ...only when the page scrolls anyway (app.js pageRoom, owner 2026-11-24): a page that fits keeps its usual end */
+:root body.has-fab.fab-fits main{padding-bottom:calc(1rem + var(--nb,0px))} /* it does not scroll: the end needs no more than the status line and a gap */
+:root.bar-xs body.has-fab.fab-fits main{padding-bottom:calc(1rem + var(--nb,0px))}
+/* the Undo toast stays centred and keeps clear of it: narrower beside it, and above it on a phone */
+body.has-fab #toast{--tl:calc(64px + 1.75rem);--tr:calc(64px + 1.75rem)}
+:root.bar-xs body.has-fab #toast{--tl:.5rem;--tr:.5rem;bottom:calc(var(--nb,58px) + 64px + 1.5rem)}
+
+/* ---------- the Sheet ----------
+   Three levels of type and few lines (owner, 2026-11-12: "a web of lines and letters of the same thickness, colour and weight"):
+   a section's title in the display face, its content at reading size, labels and notes small and muted. Space separates the
+   sections; a frame is kept for what is a thing of its own (the strip, the Actions panel, the level box, the characteristics). */
+.psheet{display:flex;flex-direction:column}
+.ps-sec{margin:0 0 1.25rem}
+#ps-actions,#ps-miasma,#rest-mi,.compsec{scroll-margin-top:calc(var(--th,0px) + 7rem)}
+/* the owner's mockup (2026-11-16): the name alone on its line, the distinctive feature beside it at about half its size, muted */
+.ps-h{align-items:center;margin-bottom:.9rem}
+.ps-id{display:flex;align-items:baseline;flex-wrap:wrap;gap:.1rem 1.1rem;min-width:0}
+.ps-id h2{margin:0;font-size:2.1rem;line-height:1.15;overflow-wrap:anywhere}
+.ps-feat{margin:0;font-size:1.1rem;line-height:1.3;color:var(--muted);overflow-wrap:anywhere}
+.ps-h>.btn{margin-left:auto}
+/* the level card tops the Sheet (the motivator): the background and village stay at every width, here the only place they show */
+.psheet .xpstrip{margin-bottom:.6rem;padding:.4rem 1rem} /* a slim card, as in the owner's mockup: one line on a laptop */
+.psheet .xpstrip .xbar .hbar{margin-top:.2rem}
+.psheet .xid .xbg{display:inline}
+/* the strip follows the level card here instead of topping the page */
+.psheet>.hud{margin-top:0}
+/* conditions and cruelty on the left, a wound from hunger or exhaustion on the right; a hairline closes the row */
+.ps-now{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 2rem;padding-bottom:.9rem;border-bottom:1px solid var(--line);margin-bottom:1.5rem}
+.ps-nowl{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 2rem;min-width:0}
+.ps-now .conds{margin:0}
+.ps-cr0,.ps-cr{display:inline-flex;align-items:center;gap:.5rem}
+/* cruelty: sulphur while it waits on you, blood from 3 (the Miasma's harm); the number is the second cue */
+.ps-cr0.warn .stepper b{color:var(--warn)}.ps-cr0.harm .stepper b{color:var(--harm)}
+.ps-wf{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .9rem;margin-left:auto;min-height:44px}
+.ps-wf .ql{margin-right:0}
+/* the wound links: harm, so the blood token in the text, no icon (owner, 2026-11-16) */
+.ps-wf .btn,.ps-wf .btn:hover{color:var(--harm);text-decoration-color:currentColor}
+/* who the crow is: characteristics | expertises by kind | traits and the connection. Section titles in the display face. */
+.psheet .ps-who{grid-template-columns:minmax(13rem,20rem) minmax(0,1.45fr) minmax(0,1.3fr);gap:1.5rem 2.5rem;margin:0 0 1.75rem}
+/* a kind's label over its chips when the column is narrow (1024 px), beside them when there is room */
+@container (max-width:64em){.psheet .ps-who{grid-template-columns:minmax(13rem,17rem) minmax(0,1.3fr) minmax(0,1.1fr);gap:1.5rem 2rem}.ps-exs .exrow{grid-template-columns:minmax(0,1fr);gap:.2rem;margin:0 0 .6rem}.ps-exs .exrow>.small{padding-top:0}}
+.psheet .ps-who>.fs-s{grid-column:auto;min-width:0}
+.psheet .fs-s>.sec-h{font-family:var(--display);font-size:1.35rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--text);border-bottom:0;padding-bottom:0;margin-bottom:.6rem}
+.psheet .fs-s>.sec-h .sec-link{font-family:var(--body);font-size:max(14px,.9rem)}
+.psheet .chconn>b{font-size:max(14px,.72rem)} /* the connection's label was 13 px at default text */
+/* narrow pages (a 768 px tablet, or 1024 px with large text): the level card in two rows, then the variant (sheetVar) */
+@container (max-width:48em){
+  .psheet .xpstrip{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem 1.25rem;align-items:center}
+  .psheet .xpstrip>.xbar{grid-column:1}.psheet .xpstrip>.lvup{grid-column:1/-1}
+  .psheet .xpstrip>.xsp{grid-row:1;grid-column:2;justify-self:end}
+  .psheet .xpstrip>.row{grid-column:2;justify-self:end}
+  /* one column (the owner's pick); the characteristics a compact strip of three, label beside value */
+  .psheet .ps-now{display:grid;justify-content:stretch;gap:.4rem}
+  .psheet .ps-wf{margin-left:0}
+  .psheet .ps-who{grid-template-columns:minmax(0,1fr);gap:1.25rem}
+  .psheet .ps-exs .exrow{grid-template-columns:7rem minmax(0,1fr);gap:.5rem}.psheet .ps-exs .exrow>.small{padding-top:.3rem}
+  .psheet .ps-chs>.sec-h{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .psheet .kpis.ch .kpi{flex-direction:row;justify-content:center;align-items:center;gap:.6rem;padding:.4rem .5rem .45rem}
+  .psheet .kpis.ch .kpi .v{font-size:1.4rem}
+
+}
+/* a phone: one column */
+@container (max-width:34em){.psheet .ps-who{grid-template-columns:minmax(0,1fr)}.psheet .ps-who>.fs-s{grid-column:auto;grid-row:auto}.ps-wf{margin-left:0}}
+/* Actions: closed, one full-width button; open, a panel of its own — a header band, an inset surface under a heavier frame, and an
+   end band — so it is plain where the list ends and the Sheet goes on */
+.ps-actb{position:relative;width:100%;justify-content:flex-start;gap:.15rem .75rem;min-height:56px;padding:.5rem 3rem .5rem 1rem;text-align:left;flex-wrap:wrap}
+.ps-actb>span:first-of-type{font-family:var(--display);font-size:1.35rem;font-weight:700}
+.ps-actb .ps-acts-s{font-weight:400;font-size:max(14px,.9rem)}
+.ps-actb svg{width:22px;height:22px;flex:none}
+/* the chevron keeps to the right edge, centred, when the words wrap */
+.ps-actb>i{position:absolute;right:1.25rem;top:50%;width:.6rem;height:.6rem;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:translateY(-70%) rotate(45deg)}
+.ps-actb[aria-expanded=true]>i{transform:translateY(-20%) rotate(-135deg)}
+.ps-acts.open{border:2px solid var(--line2);border-radius:var(--r);background:var(--panel);margin-bottom:2rem;box-shadow:0 10px 28px -18px rgba(0,0,0,.8)}
+.ps-acts.open>.ps-actb{border:0;border-bottom:2px solid var(--line2);border-radius:calc(var(--r) - 2px) calc(var(--r) - 2px) 0 0;background:var(--panel2);min-height:60px;padding-left:1.25rem}
+.ps-actl{padding:1rem 1.25rem .25rem}
+.ps-actl .abil-lead{margin:0 0 .5rem;max-width:60rem}
+/* Actions · Maneuvers · Reactions: the panel's own headings, a step under its title */
+.ps-actl .abil-h{font-family:var(--display);font-size:1.25rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--text);border-bottom:0;padding-bottom:0;margin:1.5rem 0 .65rem}
+.ps-actl .abil-h .muted{font-family:var(--body);font-size:max(14px,.85rem)}
+.ps-actl .abils{margin-bottom:.5rem}
+.ps-actl .abil>header b{font-size:1.05rem}
+.ps-acts-end{display:flex;align-items:center;justify-content:space-between;gap:.5rem 1rem;flex-wrap:wrap;margin-top:1rem;padding:.5rem 1.25rem;border-top:2px solid var(--line2);background:var(--panel2);border-radius:0 0 calc(var(--r) - 2px) calc(var(--r) - 2px)}
+.ps-acts-end .muted{font-size:max(14px,.9rem)}
+@container (max-width:34em){.ps-actl{padding:.75rem .75rem .25rem}.ps-acts.open>.ps-actb{padding-left:.75rem}.ps-acts-end{padding-inline:.75rem}.ps-actb>i{right:1rem}}
+.abil-t{margin:.35rem 0}
+.abil-src{margin-top:.1rem}
+/* the Miasma card: blood, whatever it holds (owner, 2026-11-16: the Miasma is harm, not waiting). The mark is the second cue:
+   ✕ once an effect harms you, ! while cruelty or a Mind RR is all there is */
+.ps-mi{border:1px solid var(--line2);border-left:5px solid var(--harm);border-radius:var(--r);background:color-mix(in srgb,var(--harm) var(--tint),var(--panel2));padding:.8rem 1rem .9rem;margin:0 0 1.25rem}
+.ps-mih{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem 1.25rem;justify-content:space-between}
+.ps-mih h2{margin:0;font-size:1.25rem;display:flex;align-items:center;gap:.55rem}
+.ps-mih h2 .term{color:var(--harm);text-decoration-color:currentColor}
+.ps-mii{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;border:2px solid var(--harm);color:var(--harm);font:800 .95rem/1 var(--body)}
+.ps-mip{margin:.6rem 0 .5rem}
+.ps-mi .pr{margin-top:.5rem;background:var(--panel)}
+.ps-mi .result{margin-top:.6rem}
+.ps-fx{margin-top:.5rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:.15rem .8rem}
+/* the Miasma roll on the Rest screen */
+.rest-mi{margin:0 0 1rem;border-left:5px solid var(--harm)}
+/* the Miasma elsewhere (the player's Miasma tab, the Ref's Miasma view): blood text with its word and mark; a row whose Mind RR
+   is owed carries a blood edge */
+.mi-bad{color:var(--harm);font-weight:700}
+.mi-box{border-left:5px solid var(--harm)}
+table.rt.rmi tr.mi-owed>td:first-child{box-shadow:inset 4px 0 0 var(--harm);padding-left:.75rem}
+
+/* ---------- Companions: pets, then hirelings ---------- */
+.compsec+.compsec{margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--line)}
+.comp-sh{font-size:1.35rem;margin:0 0 .4rem}
+/* '+ Add a pet', '+ Hire someone': centred both ways at any width, even when the words wrap */
+.mlist .comp-li.comp-add{display:flex;align-items:center;justify-content:center;text-align:center;padding-inline:.75rem}
+.mlist .comp-li.comp-add[aria-current=true]{padding-inline:calc(.75rem - 1px)}
+
+

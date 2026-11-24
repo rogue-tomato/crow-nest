@@ -1,0 +1,68 @@
+/* CROW NEST — the Ref's Campaigns screen and its dialogs (campaign.js). Shared tokens only; bone fills the one primary action
+   (Continue). Scoped to .cp, .cpd and .hxfm-camp. */
+.cp{max-width:64rem;margin:0 auto;color:var(--text)}
+.cp .cp-h1{font:600 2rem/1.15 var(--display);margin:0 0 .3rem}
+.cp .cp-h{font:600 1.25rem var(--display);margin:1.6rem 0 .5rem;display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.cp .cp-h:first-child{margin-top:0}
+.cp .cp-h .m{font:400 1rem var(--body);color:var(--muted)}
+.cp-list{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:var(--r-card,14px);background:var(--panel)}
+.cp-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.3rem .8rem;align-items:center;padding:.8rem 1rem;border-top:1px solid var(--line);position:relative}
+.cp-row:first-child{border-top:0}
+.cp-t{display:block;min-width:0}
+.cp-row .nm{font:600 1.25rem/1.25 var(--display);overflow-wrap:anywhere}
+.cp-row .sub{display:block;color:var(--muted);font-size:max(14px,.95rem);margin-top:.15rem}
+.cp-cur{display:inline-block;font:700 max(14px,.8rem) var(--body);border:1px solid var(--line2);border-radius:999px;padding:.05rem .55rem;margin-left:.5rem;vertical-align:3px}
+.cp-more{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:var(--r-ctl,10px);background:none;color:var(--text);cursor:pointer}
+.cp-more:hover,.cp-more[aria-expanded=true]{border-color:var(--text);background:var(--panel2)}
+.cp-pop{position:absolute;right:1rem;top:calc(100% - .4rem);z-index:6;min-width:16rem;background:var(--panel2);border:1px solid var(--line2);border-radius:var(--r-card,14px);box-shadow:var(--shadow);padding:.35rem}
+.cp-pop button{display:flex;align-items:center;gap:.6rem;width:100%;min-height:44px;border:0;background:none;color:var(--text);font:700 1rem var(--body);padding:0 .7rem;border-radius:var(--r-ctl,10px);text-align:left;cursor:pointer}
+.cp-pop button:hover,.cp-pop button:focus-visible{background:var(--panel)}
+.cp-pop button.bad{color:var(--bad)}
+.cp-pop button[aria-disabled=true]{color:var(--muted);cursor:not-allowed}
+.cp-pop button small{font-weight:400;font-size:max(14px,.85rem);margin-left:auto;color:var(--muted)}
+.cp-pop hr{border:0;border-top:1px solid var(--line);margin:.3rem 0}
+.cp-acts{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.cpfile{position:relative;cursor:pointer}
+.cpfile input{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}
+.cpfile:focus-within{outline:2px solid var(--sel);outline-offset:2px}
+.cp-note{color:var(--muted);font-size:max(14px,.95rem);margin:.8rem 0 0}
+.cp-store b{color:var(--text)}
+.cp-store[data-full]{color:var(--text);border-left:3px solid var(--warn);padding-left:.6rem}
+/* no campaign on this device (owner, 2026-11-21): one line, New campaign (the one primary) and Import */
+.cp-none{max-width:36rem;margin:3rem auto 0;text-align:center}
+.cp-none .cp-none-t{font:600 1.5rem/1.25 var(--display);margin:0}
+.cp-none .cp-acts{justify-content:center;margin-top:1.2rem}
+.cp-none .btn{min-height:48px}
+/* dialogs */
+#dlg .cpd{max-width:36rem}
+.cpd h2{font:600 1.5rem/1.2 var(--display);margin:0 0 .4rem}
+.cpd p{color:var(--muted);margin:.3rem 0 .8rem}
+.cpd .cn-crows{margin-top:-.4rem}
+.cpd p b,.cpd .cpd-t{color:var(--text)}
+.cpd .cpf{display:flex;flex-direction:column;gap:.35rem;font-weight:700;margin:.6rem 0}
+.cpd .cpf input{min-height:48px;font:600 1.1rem var(--body);padding:0 .8rem;border-radius:var(--r-ctl,10px);border:1px solid var(--line2);background:var(--panel2);color:var(--text);width:100%;box-sizing:border-box}
+.cpd .cpo{border:0;padding:0;margin:.6rem 0 0}
+.cpd .cpo legend{font-weight:700;padding:0;margin-bottom:.35rem}
+.cpd .opt2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.cpd .opt2>*{position:relative;display:block;min-height:64px;text-align:left;border:1px solid var(--line2);border-radius:var(--r-ctl,10px);background:var(--panel2);color:var(--text);padding:.5rem .8rem;font:700 1rem var(--body);cursor:pointer;box-sizing:border-box}
+.cpd .opt2>[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--text);border-color:var(--text)}
+.cpd .opt2>:disabled{opacity:.5;cursor:not-allowed}
+.cpd .opt2 small{display:block;font-weight:400;color:var(--muted);font-size:max(14px,.875rem)}
+.cpd .cn-map input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.cpd .cn-map:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.cpd .row{display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1rem}
+@container (max-width:560px){.cpd .opt2{grid-template-columns:1fr}}
+@media (max-width:560px){.cpd .opt2{grid-template-columns:1fr}.cp-row{grid-template-columns:minmax(0,1fr) auto}.cp-row>.btn{grid-row:2;justify-self:start}}
+/* the map file menu: the map is part of the open campaign */
+.hxfm .hxfm-camp{display:block;border:1px solid rgba(239,230,207,.28);border-radius:var(--r-ctl,10px);padding:.5rem .7rem;margin:0 0 .7rem;font-size:max(14px,.95rem);color:#efe6cf} /* the map file menu is dark map chrome in every theme (hexedit.css) */
+.hxfm .hxfm-camp b{color:inherit}
+.hxfm .hxfm-camp svg{vertical-align:-2px}
+.cpd select{min-height:48px;font:600 1rem var(--body);padding:0 .6rem;border-radius:var(--r-ctl,10px);border:1px solid var(--line2);background:var(--panel2);color:var(--text);width:100%}
+.cpd .cn-pick{margin-top:.5rem}
+.cpd .cn-pick[hidden]{display:none}
+/* the second tab: CROW NEST is open in another tab (campaign.js tabShow) */
+#tabdlg{max-width:min(34rem,92vw)}
+#tabdlg::backdrop{background:rgba(0,0,0,.82)}
+#tabdlg h2{font:600 1.5rem/1.2 var(--display);margin:0 0 .5rem}
+#tabdlg p{color:var(--muted);margin:.3rem 0 .8rem}
+#tabdlg .row{display:flex;justify-content:flex-end;margin-top:1rem}

@@ -1,0 +1,90 @@
+/* The player's Village screen (village.js): the square's four cards, Often needed, quiet links, and the Sell view's list and receipt.
+   No bone fill on the square (nothing to decide until a card is chosen); one primary button in each view (Buy for…, Sell N for…).
+   Sulphur = treasure waiting (with a ring and the word). Text ≥ 14 px at every Display size; touch targets ≥ 44 px. */
+.vb{display:flex;flex-direction:column;gap:1rem;margin-top:.25rem;padding-bottom:4.5rem}
+.vb-ico{width:28px;height:28px;flex:none;color:var(--muted)}
+.vb-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem 1rem}
+.vb-name{margin:0;font:600 1.75rem/1.1 var(--display);display:flex;align-items:center;gap:.5rem}
+.vb-name .vb-ico{color:var(--vil);align-self:center}
+.vb-facts{display:flex;flex-wrap:wrap;gap:.3rem 1rem;color:var(--muted);font-size:.95rem}
+.vb-facts b{color:var(--text)}
+.vb-ask{font:600 1.2rem/1.2 var(--display);margin:0}
+.vb-ask .muted{font:400 .9rem var(--body)}
+.vb-ask:focus{outline:none}
+.vb-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+.vb-card{display:flex;flex-direction:column;gap:.35rem;text-align:left;padding:1.1rem 1.15rem;border:1px solid var(--line2);border-radius:16px;background:var(--panel);color:var(--text);font:inherit;min-height:9rem;min-width:0}
+button.vb-card{cursor:pointer}
+button.vb-card:hover,.vb-card.vb-buy:hover{border-color:var(--text)}
+.vb-card .h{display:flex;align-items:center;gap:.6rem;font:600 1.4rem/1.15 var(--display);color:var(--text)}
+.vb-buy .h{background:none;border:0;padding:0;cursor:pointer;text-align:left;min-height:44px;width:100%}
+.vb-buy .h .go{margin-left:auto;font:700 1rem var(--body)}
+.vb-card .s{color:var(--muted);font-size:.95rem}
+.vb-card .s b{color:var(--text)}
+.vb-card .go{margin-top:auto;font-weight:700}
+.vb-card input[type=search]{min-height:48px;width:100%;margin-top:auto}
+.vb-card.hot{border-color:var(--warn);box-shadow:inset 4px 0 0 var(--warn)}
+.vb-badge{display:inline-flex;align-items:center;gap:.4rem;color:var(--warn);font-weight:700;font-size:.9rem}
+.vb-badge i{width:.7rem;height:.7rem;border:2px solid currentColor;border-radius:50%;flex:none}
+.vb-quick{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.5rem}
+.vb-qb{display:inline-flex;align-items:center;gap:.5rem;min-height:52px;padding:.25rem .85rem .25rem .3rem;border:1px solid var(--line2);border-radius:12px;background:none;color:var(--text);font:700 .95rem var(--body);cursor:pointer}
+.vb-qb:hover{border-color:var(--text)}
+.vb-qb .p{color:var(--muted);font-weight:400}
+.vb-qb:disabled{border-style:dashed;cursor:not-allowed}
+.vb-qb:disabled span:not(.p){color:var(--muted)}
+.vb-art.inv-art{width:44px;height:44px;display:inline-grid;place-items:center;flex:none}
+.vb-art.inv-art img,.vb-art.inv-art svg{width:100%;height:100%;object-fit:contain}
+.vb-quiet{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem 1.25rem;font-size:.95rem}
+.vb-link{color:var(--text);text-decoration:underline;text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center;background:none;border:0;font:inherit;padding:0;cursor:pointer}
+.vb-link.small{min-height:44px;font-size:.875rem;color:var(--muted)}
+.vb-link.small:hover{color:var(--text)}
+.vb-inst{margin:0;color:var(--muted);line-height:1.9}
+.vb-inst .term{color:var(--muted)}
+/* a focused view: back, title, then the work */
+.vb-back{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;font:700 1rem var(--body);color:var(--text);background:none;border:0;padding:0;cursor:pointer;align-self:flex-start}
+.vb-back .vb-ico{width:22px;height:22px;color:var(--text)}
+.vb-title{font:600 1.5rem/1.2 var(--display);margin:0}
+.vb-title .muted{font:400 .95rem var(--body)}
+.vb-title:focus{outline:none}
+.vb-step{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(17rem,1fr);gap:1rem;align-items:start}
+.vb-list{display:flex;flex-direction:column;padding-top:.3rem;padding-bottom:.3rem}
+.vb-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.5rem .75rem;align-items:center;padding:.45rem .25rem;border-top:1px solid var(--line);min-height:60px}
+.vb-row:first-child{border-top:0}
+.vb-tick{display:flex;align-items:center;gap:.75rem;min-width:0;cursor:pointer;min-height:52px}
+.vb-tick input{width:26px;height:26px;flex:none}
+.vb-row .n{font-weight:700;min-width:0;overflow-wrap:anywhere}
+.vb-row .n small{display:block;font-weight:400;color:var(--muted);font-size:.875rem}
+.vb-row .vb-pr{text-align:right;white-space:nowrap}
+.vb-row .vb-pr small{display:block;color:var(--muted);font-size:.875rem}
+.vb-in{display:flex;flex-direction:column;gap:.25rem;align-items:flex-end}
+.vb-in label{display:flex;align-items:center;gap:.4rem;color:var(--muted)}
+.vb-in input{width:5.5rem;min-height:40px}
+.vb-row.dim .n{color:var(--muted)}
+.vb-row.dim .vb-tick{cursor:default}
+.vb-row.dim .vb-tick input,.vb-row.dim .vb-art{opacity:.45} /* with the reason in words: not sellable here */
+.vb-rc{position:sticky;top:1rem;display:flex;flex-direction:column;gap:.5rem}
+.vb-rc table{width:100%}
+.vb-rc td .vb-link{margin-top:.1rem}
+.vb-greed summary{cursor:pointer;min-height:44px;display:flex;align-items:center;gap:.3rem}
+.vb-greed .fld{margin:.3rem 0}
+.vb-greed select{width:100%}
+.vb-miss{margin:0;color:var(--warn);font-weight:700}
+.vb-go{width:100%;min-height:52px}
+.vb-sub .cols.ld{margin-top:0}
+@media (max-width:980px){.vb-step{grid-template-columns:1fr}.vb-rc{position:static}}
+@media (max-width:600px){.vb-cards{grid-template-columns:1fr}.vb-card{min-height:0}}
+/* Often needed, open (owner, 2026-11-16): the tapped tile grows into − n + and Buy, right where it was. Buy is the one bone fill
+   while it is open; ✕ or Esc folds it back. */
+.vb-qopen{display:flex;flex-direction:column;align-items:stretch;gap:.45rem;padding:.4rem .5rem .55rem .3rem;border-color:var(--text);cursor:default;min-width:min(100%,19rem)}
+.vb-qopen:hover{border-color:var(--text)}
+.vb-qhd{display:flex;align-items:center;gap:.5rem}
+.vb-qhd>span{display:flex;flex-direction:column;min-width:0;flex:1}
+.vb-qhd small{font-weight:400;color:var(--muted);font-size:.875rem}
+.vb-qx{min-width:44px;min-height:44px;flex:none}
+.vb-qrow{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding-left:.3rem}
+.vb-qn{display:inline-flex;align-items:center;border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.vb-qn button{width:48px;min-height:48px;background:none;border:0;color:var(--text);font:700 1.35rem/1 var(--body);cursor:pointer}
+.vb-qn button:hover:not(:disabled){background:var(--panel2)}
+.vb-qn button:disabled{color:var(--faint);cursor:not-allowed}
+.vb-qn button:focus-visible{outline:3px solid var(--text);outline-offset:-3px}
+.vb-qn output{min-width:2.6rem;text-align:center;font:800 1.15rem/1 var(--num);border-inline:1px solid var(--line2);align-self:stretch;display:grid;place-items:center}
+.vb-qbuy{flex:1;min-height:48px;white-space:nowrap}

@@ -1,0 +1,171 @@
+/* CROW NEST — the dice at the table (owner's decision, 2026-11-21; dice.js). Players roll real dice and say the result; the Ref
+   records it with one tap. From the approved mockups (dice-mock R2/R3). Every colour is a token from visual.css: sulphur (--warn)
+   waits, green (--good) is done, blood (--harm) is harm (Miasma effects, damage, doom); the bone ring (--sel) is what the Ref
+   tapped. Bone fill stays only on the one primary action (.btn.primary). Each colour has a second cue (◷ ✓ ✕ ↻). */
+:root{--dq-min:max(14px,.78rem)}
+
+/* status words and counts */
+.dq-st{font-size:max(14px,.875rem);font-weight:700;white-space:nowrap}
+.dq-st.wait,.dq-count.wait{color:var(--warn)}.dq-st.wait::before,.dq-count.wait::before{content:"◷ "}
+.dq-st.ok,.dq-count.ok{color:var(--good)}.dq-st.ok::before,.dq-count.ok::before{content:"✓ "}
+.dq-st.bad{color:var(--harm)}.dq-st.bad::before{content:"✕ "}
+.dq-count{font-size:max(14px,.875rem);font-weight:700;white-space:nowrap}
+
+/* the one field for a value a player says: [−] value [+]; the value stays typeable */
+.dq-num{display:inline-flex;align-items:stretch;height:44px;border:1px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--panel2);flex:0 0 auto}
+.dq-num button{width:44px;border:0;background:none;color:var(--text);font:inherit;font-size:1.25rem;font-weight:700;cursor:pointer;padding:0}
+.dq-num button:hover{background:color-mix(in srgb,var(--text) 8%,transparent)}
+.dq-num input{width:3.4rem;min-width:0;border:0;border-inline:1px solid var(--line);border-radius:0;background:var(--panel);color:var(--text);text-align:center;font:inherit;font-weight:800;font-size:1.1rem;font-variant-numeric:lining-nums tabular-nums;padding:0;min-height:0}
+.dq-num input::placeholder{color:var(--muted);font-weight:400}
+.dq-num input:focus-visible{outline:0;background:color-mix(in srgb,var(--text) 6%,var(--panel))}
+.dq-num:focus-within{border-color:var(--text)}
+.dq-num.wait{border-color:var(--warn)}
+.dq-tog{min-height:44px;min-width:44px;padding:0 .7rem;border:1px dashed var(--line2);border-radius:10px;background:none;color:var(--muted);font:inherit;font-size:max(14px,.9rem);font-weight:700;cursor:pointer}
+.dq-tog[aria-pressed=true]{border-style:solid}
+.dq-tog.crit[aria-pressed=true]{color:var(--good);border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+.dq-tog.doom[aria-pressed=true]{color:var(--harm);border-color:var(--harm);box-shadow:inset 0 0 0 1px var(--harm)}
+.dq-tog[aria-pressed=true]::before{content:"✓ "}
+.dq-line{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;min-width:0}
+.dq-line>.k{font-size:max(14px,.9rem);font-weight:700;min-width:3.4rem}
+.dq-line>.k .muted{font-weight:400}
+.dq-ir{font-size:max(14px,.95rem);line-height:1.35;min-width:0}
+.dq-ir b{font-weight:700}
+.dq-ir.bad b{color:var(--harm)}.dq-ir.good b{color:var(--good)}.dq-ir.wait b{color:var(--warn)}
+.dq-ir.wait::before{content:"↻ ";color:var(--warn);font-weight:700}
+.dq-ir .btn{min-height:44px;margin-left:.3rem}
+
+/* tiers: the tiers only (owner, 2026-11-21), Doom where the test has one */
+.dq-tiers{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:.35rem;max-width:26rem}
+.dq-line>.dq-tiers{flex:1 1 13rem}
+.dq-tiers.n4{--n:4}
+.dq-tiers .btn{min-height:44px;padding:.3rem .25rem;font-size:max(14px,.92rem);white-space:nowrap;gap:.15rem}
+.dq-tiers .btn[aria-pressed=true],.dq-opts .btn[aria-pressed=true]{border-color:var(--sel);box-shadow:inset 0 0 0 2px var(--sel);background:color-mix(in srgb,var(--text) 11%,var(--panel2))}
+.dq-tiers .btn[aria-pressed=true]::before,.dq-opts .btn[aria-pressed=true]::before{content:"✓";margin-right:.2rem}
+.dq-tiers .btn.doom{color:var(--harm)}
+.dq-tiers .btn.doom[aria-pressed=true]{border-color:var(--harm);box-shadow:inset 0 0 0 2px var(--harm);background:color-mix(in srgb,var(--harm) 14%,var(--panel2))}
+.dq-tiers .btn.was{border-style:dashed;color:var(--muted)}
+.dq-tiers .btn.was s{text-decoration-thickness:2px}
+/* the totals and the dice of each tier, under its name (dice.js dqRange) */
+/* a grid, not a wrapping flex: the button keeps its content's width (a 100% basis stretched it across the row); the ✓ of a pressed tier
+   sits beside its name */
+.btn:has(>.dq-rng){display:inline-grid;grid-template-columns:repeat(2,auto);justify-content:center;align-content:center;column-gap:.2rem;row-gap:0;line-height:1.2;padding-top:.35rem;padding-bottom:.35rem}
+.btn>.dq-rng{grid-column:1/-1;text-align:center;font-size:max(14px,.8rem);font-weight:400;color:var(--muted);white-space:nowrap}
+.dq-opts{display:flex;flex-wrap:wrap;gap:.35rem}
+.dq-opts .btn{min-height:44px}
+.dq-eye{display:inline-block;font-size:var(--dq-min);font-weight:700;border:1px solid var(--line2);border-radius:999px;padding:0 .45rem;color:var(--muted);white-space:nowrap;vertical-align:.08em}
+.dq-tag{display:inline-flex;align-items:center;gap:.2rem;font-size:var(--dq-min);font-weight:700;border:1px solid var(--line2);border-radius:999px;padding:0 .5rem;color:var(--text);white-space:nowrap}
+.dq-tag.warn{border-color:var(--warn);color:var(--warn)}
+.dq-res{font-size:max(14px,.95rem);line-height:1.4}
+.dq-res.bad b{color:var(--harm)}.dq-res.good b{color:var(--good)}
+
+/* ---------- the rest: Waiting and Done, one line per ask, ordered by crow (owner, round 3) ---------- */
+.dq-rest{container-type:inline-size;display:flex;flex-direction:column;gap:.75rem}
+.dq-rest-h{display:flex;flex-wrap:wrap;gap:.3rem .8rem;align-items:baseline;margin:0}
+.dq-rest-h b{font-size:1.05rem}
+.dq-qcols{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;align-items:start}
+@container (min-width:46em){.dq-qcols{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:2rem}}
+.dq-qh{display:flex;align-items:baseline;gap:.5rem;margin:0 0 .25rem;font-size:max(14px,.8rem);font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dq-qh .dq-count{letter-spacing:0;text-transform:none}
+.dq-ql{display:flex;flex-direction:column}
+.dq-q{display:flex;align-items:baseline;gap:.6rem;min-height:48px;width:100%;padding:.7rem .6rem .55rem;border:0;border-top:1px solid var(--line);border-radius:0;background:none;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.dq-q:hover{background:var(--panel2)}
+.dq-q>.who{font-weight:700;min-width:4.2rem;flex:none}
+.dq-q>.who:empty{display:none}
+.dq-q>.what{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.dq-q>.what .muted{font-size:max(14px,.9rem)}
+.dq-q.wait{box-shadow:inset 3px 0 0 var(--warn)}
+.dq-q.wait::after{content:"›";color:var(--muted);font-size:1.4rem;line-height:1}
+.dq-q .btn{min-height:44px;flex:none;align-self:center}
+.dq-q.wait.act::after{content:none}
+.dq-q.done{min-height:44px;color:var(--muted);font-size:max(14px,.95rem)}
+.dq-q.done>.who{font-weight:600}
+.dq-q.done>.what{color:var(--text)}
+.dq-q.done>.what::before{content:"✓ ";color:var(--good);font-weight:700}
+.dq-q.done.bad>.what::before{content:"✕ ";color:var(--harm)}
+.dq-q.done.bad>.what b{color:var(--harm)}
+.dq-qo{display:flex;flex-direction:column;gap:.5rem;padding:.55rem .7rem .7rem;margin:.15rem 0;border:1px solid var(--line2);border-left:3px solid var(--warn);border-radius:0 10px 10px 0;background:var(--panel2)}
+.dq-qo.done{border-left-color:var(--good)}
+.dq-qo>header{display:flex;align-items:baseline;gap:.6rem}
+.dq-qo>header .who{font-weight:700;flex:none}
+.dq-qo>header>span:not(.who){flex:1 1 auto;min-width:0}
+.dq-qo>header .muted{font-size:max(14px,.9rem)}
+.dq-qo>header .x{margin-left:auto;flex:0 0 auto;min-height:44px}
+.dq-qo .dq-line+.dq-line{padding-top:.35rem;border-top:1px dashed var(--line)}
+.dq-qo .st-enc{margin:0}
+.dq-empty{margin:.25rem 0;color:var(--muted);font-size:max(14px,.9rem)}
+.dq-fin{display:flex;flex-wrap:wrap;gap:.4rem .75rem;align-items:center;justify-content:flex-end;padding:.75rem 0 0;border-top:1px solid var(--line2)}
+.dq-fin .btn{min-height:48px}
+.hxpanel .dq-fin,.st-card .dq-fin{position:sticky;background:var(--panel);z-index:2}
+/* the step panel scrolls inside its 1rem padding: the footer covers it to the panel's edges */
+.hxpanel .dq-fin{bottom:-1rem;margin:0 -1rem;padding:.75rem 1rem 1rem}
+.st-card .dq-fin{bottom:var(--nb,0px);padding-bottom:.5rem}
+.dq-extra{display:flex;justify-content:flex-end}.dq-extra .btn{min-height:44px}
+.hxpanel .dq-fin .btn.primary{flex:1 1 auto}
+
+/* ---------- the Miasma view: one row per crow (round 2, 01R2A) ---------- */
+.dq-mrow{display:grid;grid-template-columns:minmax(9rem,1fr) minmax(15rem,1.3fr) minmax(0,2.4fr) minmax(6.5rem,auto);gap:.4rem 1rem;align-items:center;padding:.6rem 0;border-top:1px solid var(--line)}
+.dq-mrow .who b{display:block;font-size:1.05rem}.dq-mrow .who .muted{font-size:max(14px,.875rem)}
+.dq-mrow .who{display:flex;flex-direction:column;line-height:1.3}
+.dq-mrow .st{text-align:right}
+.dq-mrow.wait .who{box-shadow:inset 3px 0 0 var(--warn);padding-left:.65rem}
+.dq-mrow.done .who{box-shadow:inset 3px 0 0 var(--good);padding-left:.65rem}
+.dq-mrow.bad .who{box-shadow:inset 3px 0 0 var(--harm);padding-left:.65rem}
+.dq-mrow .b{display:flex;flex-wrap:wrap;gap:.4rem .6rem;align-items:center;min-width:0}
+.dq-mrow .dq-tiers{max-width:none}
+@container (max-width:62em){.dq-mrow{display:flex;flex-wrap:wrap;gap:.4rem .8rem}.dq-mrow .who{flex:1 1 0;min-width:0}.dq-mrow .st{flex:0 0 auto;order:1}.dq-mrow .a,.dq-mrow .b{flex:1 1 100%;order:2}.dq-mrow .b:empty{display:none}}
+.dq-mview{container-type:inline-size}
+
+/* ---------- one crow's row on a step panel (roles, weather, hunt): who, status, the tap ---------- */
+.dq-row{display:flex;flex-direction:column;gap:.4rem;padding:.6rem 0 .65rem;border-top:1px solid var(--line)}
+.dq-row>header{display:flex;flex-wrap:wrap;gap:.1rem .6rem;align-items:baseline}
+.dq-row>header>b{font-size:1.02rem}
+.dq-row>header .muted{font-size:max(14px,.875rem)}
+.dq-row>header .dq-st{margin-left:auto}
+.dq-row.wait{box-shadow:inset 3px 0 0 var(--warn);padding-left:.65rem}
+.dq-row.done{box-shadow:inset 3px 0 0 var(--good);padding-left:.65rem}
+.dq-row.bad{box-shadow:inset 3px 0 0 var(--harm);padding-left:.65rem}
+.dq-row .dq-what{font-size:max(14px,.875rem);color:var(--muted);margin:0}
+.dq-row .dq-tiers{max-width:none}
+
+/* ---------- the player's side: what to roll, then one pill (08R2B / 08R3) ---------- */
+.dq-pill{display:inline-flex;align-items:center;gap:.35rem;min-height:36px;padding:.15rem .75rem;border-radius:999px;border:1px solid var(--line2);font-size:max(14px,.95rem);font-weight:700;white-space:nowrap;flex:none}
+.dq-pill.wait{border-color:var(--warn);color:var(--warn)}.dq-pill.wait::before{content:"◷"}
+.dq-pill.bad{border-color:color-mix(in srgb,var(--harm) 70%,transparent);color:var(--harm)}.dq-pill.bad::before{content:"✕"}
+.dq-pill.good{border-color:color-mix(in srgb,var(--good) 70%,transparent);color:var(--good)}.dq-pill.good::before{content:"✓"}
+.dq-prow{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;padding:.5rem 0;border-top:1px solid var(--line)}
+.dq-prow>.t{flex:1 1 9rem;min-width:0;font-weight:700}
+.dq-prow>.t .muted{font-weight:400;font-size:max(14px,.9rem)}
+.dq-prow>.r{flex:1 1 100%;font-size:max(14px,.9rem);color:var(--muted);margin:0}
+.dq-prow .btn{min-height:44px}
+.dq-plist{margin:0}
+.dq-pend{margin:.6rem 0 0;color:var(--warn);font-weight:700;font-size:max(14px,.95rem)}
+.dq-pend::before{content:"◷ "}
+
+/* the activity: chips, a thin rule, the chosen activity's text and its controls, in one container (chipdesc 3A/4A) */
+.dq-cd{margin:0;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.dq-cd.on{border-color:var(--line2)}
+.dq-chips{display:flex;flex-wrap:wrap;gap:6px}
+.dq-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);color:var(--text);font:700 max(14px,.85rem)/1.2 var(--body);text-align:left;cursor:pointer}
+.dq-chip:hover{border-color:var(--text)}
+.dq-chip[aria-pressed=true]{background:var(--panel2);border-color:var(--sel);box-shadow:0 0 0 2px var(--sel)}
+.dq-chip[disabled]{border-style:dashed;color:var(--muted);cursor:not-allowed;box-shadow:none}
+.dq-desc{margin:10px 0 0;padding:10px 0 0;border-top:1px solid var(--line);font-size:max(14px,.88rem);line-height:1.45}
+.dq-desc>p{margin:0}
+.dq-desc>p+*{margin-top:8px}
+.dq-desc .cd-name{font-weight:700;margin-right:6px}
+.dq-desc .rule-link{white-space:nowrap;margin-left:4px;font-size:max(14px,.85rem)}
+.dq-desc .optgrid{margin-top:8px}
+.dq-desc .row{margin-top:8px}
+.dq-desc select{min-height:44px}
+.dq-desc .craftpick{margin-top:8px}
+.dq-food .dq-chips{margin-top:.2rem}
+
+/* the Study card under a crow in the Ref's Party column (06B) */
+.dq-ask{margin:.5rem 0 .2rem;padding:.6rem .7rem;border:1px solid var(--line2);border-top:3px solid var(--warn);border-radius:10px;background:color-mix(in srgb,var(--warn) calc(var(--tint)*.6),var(--panel2));display:flex;flex-direction:column;gap:.45rem}
+.dq-ask>b{color:var(--warn);font-size:max(14px,.95rem)}.dq-ask>b::before{content:"◷ "}
+.dq-ask p{margin:0;font-size:max(14px,.9rem)}
+.dq-ask .dq-tiers{max-width:none}
+.dq-asks{display:flex;flex-direction:column}
+/* a global .who (a grid elsewhere) would push the line's baseline down */
+.dq-q>.who,.dq-qo .who{display:inline-block;margin:0;gap:0}
+.dq-row .dq-line>.dq-tiers{flex:1 1 9rem} /* a narrow step panel: the tiers and one Roll on one line */

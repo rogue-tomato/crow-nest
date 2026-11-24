@@ -1,0 +1,42 @@
+/* Places (places.js): the list of the campaign's settlements, points of interest and dungeons; a place's page; The crows arrive. */
+.pl-find{width:100%;min-height:44px;margin:0 0 8px}
+.pl-h{margin:12px 0 4px;font-size:max(14px,.8rem);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-family:var(--body)}
+.pl-h:first-of-type{margin-top:0}
+.pl-list li button{justify-content:flex-start;align-items:center;gap:12px;min-height:52px}
+.pl-list li button>.pl-ic,.pl-kinds .pl-ic,.pl-arr-list .pl-ic{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:28px;max-width:none;color:var(--muted)}
+.pl-ic svg{width:22px;height:22px}
+.pl-list li button .pl-t{display:flex;flex-direction:column;gap:2px;max-width:none;color:var(--text);font-size:1rem;font-weight:700;text-align:left;white-space:normal}
+.pl-list li button .pl-t span{max-width:none;color:var(--muted);font-size:max(14px,.85rem);font-weight:400;text-align:left}
+.pl-kinds{display:grid;gap:8px}
+.pl-kinds .btn{justify-content:flex-start;gap:8px;min-height:44px}
+/* a point of interest's or a dungeon's page */
+.pl-page{display:grid;gap:16px;align-content:start}
+.pl-head{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end}
+.pl-head .cd-box{margin:0}
+.pl-name{flex:1 1 16rem;margin:0}
+.pl-name input{width:100%;font-weight:700;font-size:1.1rem}
+.pl-q{margin:0;font-size:max(14px,.9rem);display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.pl-q small{color:var(--muted);font-weight:400;font-size:max(14px,.85rem)}
+.pl-page textarea{width:100%;min-height:6rem;font:inherit;line-height:1.45}
+.pl-facts{margin:0}
+/* The crows arrive: type, pick, Enter */
+#dlg:has(.pl-arr){width:min(36rem,94vw);max-width:min(36rem,94vw)}
+.pl-arr{display:grid;gap:8px;min-width:0}
+.pl-arr h2{margin:0 0 4px}
+#pl-arr-q{width:100%;min-height:48px;font-size:1.05rem}
+.pl-arr-list{list-style:none;margin:0;padding:4px 0;max-height:min(22rem,44vh);overflow:auto;border:1px solid var(--line);border-radius:10px}
+.pl-arr-list .pl-oh{padding:6px 12px 2px;color:var(--muted);font-size:max(14px,.8rem);font-weight:700}
+.pl-arr-list [role=option]{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:center;padding:8px 12px;min-height:52px;cursor:pointer;border-left:3px solid transparent}
+.pl-arr-list [role=option]:hover{background:var(--panel2)}
+.pl-arr-list [role=option] small{display:block;color:var(--muted);font-size:max(14px,.85rem)}
+.pl-arr-list [aria-selected=true]{background:var(--panel2);border-left-color:var(--scene,var(--text))}
+.pl-arr-note{margin:4px 0 0;font-size:max(14px,.9rem)}
+.pl-arr-kind .cd-box{margin:0}
+/* Nearby Monster: the campaign's dungeons as chips, each with who lives there */
+.pl-near-d .cd-chip small{color:var(--muted);font-weight:400;margin-left:4px;font-size:max(14px,.8rem)}
+.pl-near>.cd-box{margin:0}
+/* the road waits while the party is in a settlement */
+.pl-wait{display:grid;gap:8px}
+.pl-wait h3{margin:0;font-size:1.15rem}
+.pl-wait h3 small{color:var(--muted);font-weight:400;font-size:max(14px,.85rem)}
+.pl-wait p{margin:0}

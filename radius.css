@@ -1,0 +1,29 @@
+/* CROW NEST — one corner system outside the bar (owner, 2026-11-17: sharp and rounded buttons side by side). Radii only: no size,
+   colour or spacing changes. Loads last; drop this file (and its <link>) to go back.
+     Control 10 px — every button, field, select, map tool, menu row, option to tap. (The day's rail is square, as the bar.)
+     Group   12 px — a frame holding controls edge to edge (segmented choices, the map's tool column).
+     Card    14 px — boxes, panels, banners, popovers, the hex card, dialogs, the toast (= --r).
+     Pill          — only what cannot be pressed: counts, status tags. A pill is never a button.
+   The bar's cells stay square (topbar.css); the inventory board keeps its own cells (inventory.css). */
+:root{--r-ctl:10px;--r-grp:12px;--r-card:14px}
+
+/* controls: 10 px */
+.btn,.tbtn,.ibtn,.xbtn,.stp,.wbtn,.comp-ed,.hb,.hxeditb,.mrow,
+.stepper button,.dice6 button,.kpi .adj button,.adj button,td .adj button,.kpi .st,.hud-st .st,
+input[type=number],input[type=text],input[type=search],select,textarea,.comp-name input,.hxcol input[type=color],
+.seg button,.cd-chip,.libnav button,.backlink,.rel a,.inv-filters button,.placebar .btn,.jr-chip,#toast .tundo,
+.lb li[role=option],.mlist li button,.mlist li button[aria-current=true],.cr,.inv-loot-pick,.hxcpg button,.card .acts button,
+.vb-qb,.opt,button.chip,a.chip,.list-links a{border-radius:var(--r-ctl)}
+/* the usage-die pips of an item card are buttons too */
+.ifx .pip,.inv-detail-card .card .pip{border-radius:var(--r-ctl)}
+
+/* groups: 12 px */
+.seg,.hxtools,.hxrail,.hxvt>*{border-radius:var(--r-grp)}
+/* the day's steps are square, like the bar (owner, 2026-11-18; topbar.css) */
+.jr-rail,.jr-rail span{border-radius:0}
+
+/* cards: 14 px */
+.box,.banner,.cue,.pop,#searchPop,dialog,.wsmenu,.hxhc,.hxplaces,.hxfogbar,.hxpm,.hxcp,.comp-pay,.pr,.result,.jr-actd,.vb-card,.sit,
+#toast,.opt.who-c,.hcards .opt{border-radius:var(--r-card)}
+
+/* pills stay pills only where nothing is pressed: counts and status tags (.tbadge, .inv-loot-n, .netn, .tag, span.chip, .jr-votes i) */

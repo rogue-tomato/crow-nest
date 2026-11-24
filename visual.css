@@ -1,0 +1,149 @@
+/* CROW NEST — visual language (UX iteration 4, 2026-11-12; docs/ux-redesign/07-visual-language.md).
+   The eye reads before the words. Each colour has one job, the same everywhere:
+     scene  — where the party is: Dungeon (torch ember), Travel (open-sky blue), Village (safe green); combat turns it to blood.
+              It marks the chrome (band under the bar, the active view and section, the scene chip) and the state of play
+              (clock bar, situation line, current step). Never a button.
+     bone   — the one primary action of a screen (filled). Nothing that only shows state is filled with bone any more.
+     select — a bone ring on a raised surface: the creature in focus, the current step.
+     harm   — blood: damage, wounds, negative conditions, creatures standing against the party, destructive actions.
+     warn   — sulphur: waiting on someone: the paused clock, a prepared encounter, an encounter on its way, loot to take.
+     good   — green: done, safe, healthy: finished steps, all down, blessed, full Stamina.
+     quiet  — grey, hollow: not started, future steps, unavailable.
+   Loads last. Hues are tuned per theme for WCAG AA on their surfaces; the bar stays dark in every theme, so it has its own set. */
+:root{
+  --dun:#ec9a5e;--trv:#86bcec;--vil:#93c983;--harm:#ef8177;--warn:#e9c95c;--good:#93c983;
+  --dun-b:#ec9a5e;--trv-b:#86bcec;--vil-b:#93c983;--harm-b:#ef8177; /* on the always-dark bar */
+  --scene:var(--line2);--scene-b:#6b6863;
+  --tint:12%;
+}
+:root[data-theme=light]{--dun:#93430c;--trv:#1c568a;--vil:#2b6324;--harm:#9a2f2b;--warn:#6e5200;--good:#2b6324;--tint:9%}
+:root[data-scene=delve]{--scene:var(--dun);--scene-b:var(--dun-b)}
+:root[data-scene=travel]{--scene:var(--trv);--scene-b:var(--trv-b)}
+:root[data-scene=village]{--scene:var(--vil);--scene-b:var(--vil-b)}
+:root[data-mode=fight]{--scene:var(--harm);--scene-b:var(--harm-b)}
+
+/* ---------- where am I: the bar ---------- */
+/* the bar, its current view and the status line under it: topbar.css. The bottom bar on phones: */
+#nav .vbtn[aria-current=page]{color:#fff;background:#1c1c1c;box-shadow:inset 0 3px 0 var(--scene-b)} /* the current view: the line on top (owner, 2026-11-12) */
+:root.bar-xs #nav .vbtn[aria-current=page]{box-shadow:inset 0 3px 0 var(--scene-b)}
+#nav .vbtn[aria-current=page] svg{color:var(--scene-b)}
+/* the status line's icon answers “where is the party”, so it keeps the place's colour even in combat */
+:root{--place-b:#6b6863}:root[data-scene=delve]{--place-b:var(--dun-b)}:root[data-scene=travel]{--place-b:var(--trv-b)}:root[data-scene=village]{--place-b:var(--vil-b)}
+#tabs .tl button[aria-selected=true]{border-bottom:3px solid var(--scene);color:var(--text)}
+/* the mark of loot waiting: something to do, not an alarm */
+.tbadge{background:var(--warn);color:#1a1400}
+:root[data-theme=light] .tbadge{color:#fff}
+/* …except the party loot count on the round Inventory button and on the folded loot tab: a red chip with a white number, like an
+   iOS badge (owner, 2026-11-16). The button itself is sulphur, so the count stands out from it; the number is the second cue. */
+:root{--cnt-red:var(--danger)}
+:root .tbadge.red,:root .inv-loot-n{background:var(--cnt-red);color:#fff}
+
+/* ---------- action levels ---------- */
+/* primary: the brightest, largest thing in its group; one per screen */
+.btn.primary{box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 6px 18px -8px rgba(0,0,0,.8)}
+.btn.primary.st-go,.st-acts>.btn.primary{min-height:52px;padding-inline:1.4rem;font-size:1.05rem}
+:root[data-theme=light] .btn.primary{box-shadow:0 6px 16px -8px rgba(0,0,0,.45)}
+/* a destructive tertiary waits its turn: quieter at rest, red when reached */
+.btn.ghost.danger{color:var(--muted);text-decoration-color:color-mix(in srgb,var(--harm) 70%,transparent);font-weight:600}
+.btn.ghost.danger:hover,.btn.ghost.danger:focus-visible{color:var(--harm)}
+/* unavailable: hollow and dashed, so it never reads as a primary */
+.btn:disabled,.btn[aria-disabled=true]{opacity:1;background:none;border:1px dashed var(--line2);color:var(--muted);box-shadow:none}
+
+/* ---------- state reads as state ---------- */
+.st-tag.on{color:var(--scene)}
+.st-tag.warn{color:var(--warn)}.st-tag.warn::before{border-color:currentColor;background:none;box-shadow:inset 0 0 0 2px currentColor}
+.st-tag.good{color:var(--good)}.st-tag.good::before{background:currentColor}
+.st-tag.bad{color:var(--harm)}
+.warn-t{color:var(--warn);font-weight:700}
+
+/* ---------- Ref: the dungeon turn ---------- */
+/* reading order: the clock (scene colour while it runs, dimmed and sulphur when it waits) → the one primary → what came up */
+.st-card>.st-h h2::before{content:'';display:inline-block;width:.55rem;height:.55rem;border-radius:2px;background:var(--scene);margin:0 .6rem .22em 0;vertical-align:middle;transform:rotate(45deg)}
+.st-bar i{background:var(--scene)}
+.st-clock.paused .clock{color:var(--muted)}
+.st-clock.paused .st-bar i{background:repeating-linear-gradient(135deg,var(--warn) 0 6px,color-mix(in srgb,var(--warn) 45%,transparent) 6px 12px)}
+/* an encounter right now: blood; a sign of one coming: sulphur */
+.st-enc.hit.now{border-color:color-mix(in srgb,var(--harm) 60%,var(--line2));border-left:4px solid var(--harm);background:color-mix(in srgb,var(--harm) var(--tint),var(--panel2))}
+.st-enc.hit.soon{border-color:color-mix(in srgb,var(--warn) 50%,var(--line2));border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) calc(var(--tint) * .7),var(--panel2))}
+.st-enc.hit .roll{border-color:currentColor}
+.st-enc.hit.now b{color:var(--harm)}.st-enc.hit.soon b{color:var(--warn)}
+.st-enc.miss{border-left:4px solid var(--good)}
+/* a prepared encounter waits for one decision */
+.st-prep{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) calc(var(--tint) * .6),var(--panel2))}
+.st-prep .st-ench b{color:var(--warn)}
+/* end of the turn: done is green, now is the scene, later is quiet */
+.st-steps .done .st-sn{background:var(--good);border-color:var(--good);color:#0d1a0b}
+:root[data-theme=light] .st-steps .done .st-sn{color:#fff}
+.st-steps .cur .st-sn{border:2px solid var(--scene);color:var(--text);background:color-mix(in srgb,var(--scene) 20%,transparent)}
+.st-steps .cur{box-shadow:inset 3px 0 0 var(--scene);padding-left:.75rem;margin-left:-.75rem}
+.st-steps .next .st-sn{border-style:dashed}
+
+/* ---------- Ref: combat ---------- */
+/* reading order: “Combat” in blood with how many still stand → the creature in focus → its damage field (the primary) → the list */
+.st-fight>.st-h h2{color:var(--harm)}
+.cr{border-radius:8px}
+.cr[aria-pressed=true]{background:color-mix(in srgb,var(--text) 9%,var(--panel2));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--text) 70%,transparent),inset 4px 0 0 var(--text);position:relative;z-index:1}
+.cr[aria-pressed=true] .cr-n{color:var(--text)}
+.cr .hp i{background:color-mix(in srgb,var(--text) 78%,var(--panel))}
+.cr .hp.low i,.cr .hp i[style*="danger"]{background:var(--harm)}
+.cr.down .cr-n{color:var(--muted)}
+.crs>.st-focus{border-color:color-mix(in srgb,var(--text) 45%,var(--line2));border-top:3px solid var(--harm)}
+.st-focus.is-down{border-top-color:var(--line2)}
+.fo-down{color:var(--harm)}
+
+/* ---------- after the combat ---------- */
+/* reading order: “After the combat” → the sulphur “clock still paused” → treasure → Resume (the primary) */
+.st-after>.st-h h2::before{background:var(--good)}
+
+/* ---------- the party, at a glance: health in three tones ---------- */
+.hp.lv-ok i,.hud-bar.lv-ok i{background:var(--good)}
+.hp.lv-mid i,.hud-bar.lv-mid i{background:var(--warn)}
+.hp.lv-low i,.hud-bar.lv-low i,.hp.lv-out i,.hud-bar.lv-out i{background:var(--harm)}
+.pflag.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+:root[data-theme=light] .pflag.warn{background:color-mix(in srgb,var(--warn) 10%,transparent);color:color-mix(in srgb,var(--warn) 78%,#000)}
+
+/* ---------- conditions: harmful or helpful before the word is read ---------- */
+.chip.on.harm{background:color-mix(in srgb,var(--harm) 20%,var(--panel2));color:var(--harm);border:1px solid color-mix(in srgb,var(--harm) 55%,transparent)}
+.chip.on.good{background:color-mix(in srgb,var(--good) 18%,var(--panel2));color:var(--good);border:1px solid color-mix(in srgb,var(--good) 55%,transparent)}
+:root[data-theme=light] .chip.on.harm{background:color-mix(in srgb,var(--harm) 9%,var(--panel));color:var(--harm)}
+:root[data-theme=light] .chip.on.good{background:color-mix(in srgb,var(--good) 9%,var(--panel));color:var(--good)}
+
+/* ---------- Player: the strip and the quick sheet ---------- */
+/* reading order: the strip (Stamina tone, wounds) → the situation band → conditions → own attacks */
+.hud-c.bad{background:color-mix(in srgb,var(--harm) var(--tint),transparent)}
+.hud-c.bad .v{color:var(--harm)}
+.sit{display:block;padding:.5rem .8rem;border-radius:8px;border-left:4px solid var(--scene);background:color-mix(in srgb,var(--scene) var(--tint),var(--panel2));color:var(--text);margin-bottom:.6rem}
+.sit b{color:var(--scene)}
+.sit-fight b{color:var(--harm)}
+
+/* ---------- management screens stay calm; a cue waits for a decision ---------- */
+.cue{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) calc(var(--tint) * .6),var(--panel2))}
+.cue b:first-child{color:var(--warn)}
+
+/* ---------- Journey: its rail follows the road's colour ---------- */
+.jr-rail span.cur{background:var(--scene);color:#111}
+:root[data-theme=light] .jr-rail span.cur{color:#fff}
+.jr-li .jr-st.wait{color:var(--warn)}
+.jr-li .jr-st.ok{color:var(--good)}
+
+
+/* the strip: a warning cell (wounds, slow) speaks in sulphur, a bad one in blood — before the number is read */
+.hud-c.warn .v{color:var(--warn)}
+.hud-c.warn{box-shadow:1px 0 0 var(--line),0 1px 0 var(--line),inset 0 3px 0 var(--warn)}
+.hud-c.bad{box-shadow:1px 0 0 var(--line),0 1px 0 var(--line),inset 0 3px 0 var(--harm)}
+:root[data-theme=light] .hud-c.warn .v{color:color-mix(in srgb,var(--warn) 80%,#000)}
+
+/* rest: what finishing gives back is good news */
+.restfin li::marker{color:var(--good)}
+
+/* Healing is good: solid green (owner, 2026-11-14), the same job as green "done"; the word is the second cue */
+.btn.good.solid{background:var(--good);border-color:var(--good);color:#0f1a0c;font-weight:700}
+.btn.good.solid:hover{background:color-mix(in srgb,var(--good) 85%,#fff)}
+:root[data-theme=light] .btn.good.solid{color:#fff}
+:root[data-theme=light] .btn.good.solid:hover{background:color-mix(in srgb,var(--good) 85%,#000)}
+
+/* Characteristics, one colour each wherever they show (owner, 2026-11-14): Strength red, Agility green, Mind blue.
+   The name is always written next to the number (the second cue); the colour marks the label and a 3px top edge. */
+.chr{--chr:var(--line2)}.chr-A{--chr:var(--good)}.chr-M{--chr:var(--trv)}.chr-S{--chr:var(--harm)}
+.kpi.chr,.tile.chr{box-shadow:inset 0 3px 0 var(--chr)}
+.kpi.chr .k,.tile.chr .k,.hst.chr small{color:var(--chr)}

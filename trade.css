@@ -1,0 +1,66 @@
+/* Trade on the road (trade.js): the drawer takes Party loot's place in the Inventory and is built from its parts (inv-window,
+   inv-loot-row, inv-loot-pick, inv-filters). New here: the price column, the cultists' swap tray, the encounter card's button
+   and the Ref's list of who carries what. Approved mock-up: QA/design/trade/ (owner, 2026-11-23). */
+/* more air (owner, 2026-11-23, QA/design/travel-nomap/trade-air.css): one header line (who trades, Buy | Sell, close), the money beside
+   the search, taller rows, the Inventory's own search and filters step aside while a trade is open */
+.inv-shell:has(.tr-drawer) .inv-bag-tools{display:none}
+.tr-drawer .inv-window-title{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"t tabs x" "s tabs x";align-items:center;gap:0 12px;padding:10px 12px 10px 16px}
+.tr-drawer .inv-window-title h2{grid-area:t;margin:0;font-size:1.05rem}
+.tr-drawer .inv-window-title>span{grid-area:s;justify-self:start;text-align:left;font-size:max(14px,.85rem);color:var(--inv-muted)}
+.tr-drawer .inv-window-title>span b{color:var(--inv-ink)}
+.tr-drawer .inv-window-title .xbtn{grid-area:x}
+.tr-tabs,.tr-cats{display:flex;flex-wrap:wrap;gap:0}
+.tr-tabs{grid-area:tabs;margin:0;flex:none}
+.tr-tabs button{min-width:4.5rem;min-height:44px}
+.tr-cats{margin:10px 16px 4px;gap:6px}
+.tr-tools{display:flex;align-items:center;gap:12px;margin:12px 16px 0}
+.tr-tools .tr-search{flex:1;margin:0;min-width:0}
+.tr-have{white-space:nowrap;font-size:max(14px,.9rem);color:var(--inv-muted)}
+.tr-have b{font:700 1.1rem var(--num);font-variant-numeric:lining-nums tabular-nums;color:var(--inv-ink)}
+.tr-line{margin:10px 16px 0;font-size:max(14px,.85rem);color:var(--inv-muted);line-height:1.4}
+.tr-line b{color:var(--inv-ink);font-variant-numeric:lining-nums tabular-nums}
+.tr-n{text-align:center;margin-bottom:.5rem}
+.tr-h{margin:12px 8px 6px;font:700 max(14px,.85rem) var(--body);color:var(--inv-heading)}
+.tr-h span{font-weight:400;color:var(--inv-muted)}
+.tr-row .inv-loot-pick{cursor:default}
+.tr-row .inv-loot-pick:hover{background:none}
+.tr-drawer .inv-loot-body{flex:1;min-height:0;overflow:auto;padding:4px 8px 8px}
+.tr-row{min-height:64px;padding:8px;gap:12px;border-radius:10px}
+.tr-row+.tr-row{margin-top:2px}
+.tr-row .nm b{font-size:1rem;line-height:1.25}
+.tr-row .tr-price{flex:none;min-width:4.5rem;text-align:right;font:700 1.05rem/1 var(--num);font-variant-numeric:lining-nums tabular-nums;color:var(--inv-ink)}
+.tr-row .btn{flex:none;min-width:4.75rem;min-height:44px}
+.tr-row.dear .tr-price,.tr-row.dear .nm>b{color:var(--inv-muted)}
+.tr-row .btn[aria-pressed=true]{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+.tr-row.in{background:var(--inv-raised)}
+.tr-more{margin-top:.5rem}
+.tr-more>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;min-height:44px;padding:0 .25rem;font-weight:700;color:var(--inv-ink)}
+.tr-more>summary::-webkit-details-marker{display:none}
+.tr-more[open]>summary .nest-i{transform:rotate(90deg)}
+/* the swap tray: what goes each way on the left, Swap on the right; card prices are a guide, said once in the list heading */
+.tr-deal{border-top:1px solid var(--inv-line);padding:10px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:center;background:var(--inv-bg);flex:none}
+.tr-deal .tr-side{grid-column:1}
+.tr-side{display:grid;grid-template-columns:4.6rem minmax(0,1fr) auto;gap:.5rem;align-items:baseline}
+.tr-side>span:first-child{font-size:max(14px,.8rem);color:var(--inv-muted)}
+.tr-side>b{font-size:.95rem;overflow-wrap:anywhere}
+.tr-side>span:last-child{font:700 .95rem/1 var(--num);font-variant-numeric:lining-nums tabular-nums}
+.tr-deal .btn.primary{grid-column:2;grid-row:1/span 2;min-height:48px;padding:0 24px}
+/* a trade drawer is taller than Party loot: beside the inventory it takes the height down to the status line and grows with the
+   screen (532 px at 1366, 586 at 1920; the inventory's cells shrink with their container and stay ≥ 44 px); over it on a tablet,
+   the screen's height, not the inventory's */
+@container inv (min-width:64rem){
+  .inv-shell:is(.auto,.open):has(.tr-drawer){--tr-w:clamp(26rem,40cqw,38rem)}
+  .inv-shell:is(.auto,.open) .tr-drawer{width:var(--tr-w);align-self:start}
+  .inv-shell:is(.auto,.open) .tr-drawer .inv-loot-panel{position:sticky;top:.5rem;width:var(--tr-w);height:calc(100dvh - 172px);max-height:none;display:flex;flex-direction:column}}
+@container inv (max-width:64rem){.inv-shell.open .tr-drawer .inv-loot-panel{bottom:auto;width:min(23rem,calc(100cqw - 5rem));height:min(44rem,calc(100dvh - 210px))}} /* px: the bars above and below are not text-sized; with 24 px text 12rem ate a third of the screen */
+/* the player's encounter card on the Journey: one button opens the trade */
+.tr-open{margin-top:.6rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.tr-open .small{color:var(--muted)}
+/* the Ref's card: who carries what, and what the crows took */
+.tr-ref{margin-top:.75rem;border-top:1px dashed var(--line2);padding-top:.75rem}
+.tr-ref h4{margin:0 0 .35rem;font-size:1rem;color:var(--text)}
+.tr-ref h4 span{font-weight:400;color:var(--muted)}
+.tr-goods{list-style:none;margin:0;padding:0;display:grid;gap:.3rem}
+.tr-goods li{font-size:.95rem;line-height:1.4}
+.tr-goods li b{font-weight:700;color:var(--text)}
+.tr-goods li span{color:var(--muted)}

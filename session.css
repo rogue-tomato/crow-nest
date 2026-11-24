@@ -1,0 +1,186 @@
+/* CROW NEST — the session (session.js): the Ref's starter, a player's pick and wait, frozen crows. Shared tokens; bone fills only
+   the one primary action; green = ready (done), sulphur = choosing / waiting, dashed grey = not here, frost stripes = frozen. */
+.ss{max-width:80rem;margin:0 auto;color:var(--text)}
+.ss .ss-camp{margin:0 0 .2rem;font-size:max(14px,1rem)}.ss .ss-camp b{color:var(--text)}
+.ss .ss-h1{font:600 2rem/1.15 var(--display);margin:0 0 .3rem}
+.ss .lead{margin:0 0 1.2rem}
+.ss-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(18rem,22rem);gap:1.25rem;align-items:start}
+.ss-main{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.ss-box{border:1px solid var(--line);border-radius:var(--r-card,14px);background:var(--panel);padding:1rem 1.15rem}
+.ss-box>h3{font:600 1.25rem var(--display);margin:0 0 .6rem}
+.ss-bh{display:flex;align-items:center;gap:.7rem;margin-bottom:.6rem}
+.ss-bh h3{font:600 1.3rem var(--display);margin:0;flex:1}
+.ss-bm{color:var(--muted);font-size:max(14px,.95rem)}
+.ss-n{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:50%;border:2px solid var(--line2);font-weight:700;color:var(--muted)}
+.ss-n.done{background:var(--good);border-color:var(--good);color:#0d1a0b}
+.ss-n.part{border-color:var(--warn);color:var(--warn)}
+.ss-code{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.ss-code p{flex:1;min-width:14rem;margin:0}
+.ss-k{font:700 clamp(2rem,4vw,3.2rem)/1 var(--body);letter-spacing:.12em}
+.ss-list{list-style:none;margin:0;padding:0}
+.ss-row{display:flex;align-items:center;gap:.9rem;padding:.7rem 0;border-top:1px solid var(--line)}
+.ss-list .ss-row:first-child{border-top:0}
+.ss-av{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line2);font:600 1.25rem var(--display);background:var(--panel2)}
+.ss-row.away .ss-av,.ss-row.add .ss-av,.ss-row.dead .ss-av{border-style:dashed;background:none}
+.ss-who{flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem}
+.ss-who b{font:600 1.2rem var(--display)}
+.ss-who .muted{font-size:max(14px,.95rem)}
+.ss-row.away .ss-who b,.ss-row.dead .ss-who b{color:var(--muted)}
+.ss-row.dead .ss-who b{text-decoration:line-through}
+.ss-stw{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;text-align:right}
+.ss-st{display:inline-flex;align-items:center;gap:.4rem;font-weight:700;font-size:max(14px,.95rem);white-space:nowrap}
+.ss-st::before{content:"";width:12px;height:12px;border-radius:50%;flex:none}
+.ss-st.good{color:var(--good)}.ss-st.good::before{background:currentColor}
+.ss-st.warn{color:var(--warn)}.ss-st.warn::before{box-shadow:inset 0 0 0 2.5px currentColor}
+.ss-st.away{color:var(--muted)}.ss-st.away::before{width:9px;height:9px;box-shadow:inset 0 0 0 2px currentColor}
+.ss-st.dead{color:var(--muted)}.ss-st.dead::before{content:"✕";width:auto;height:auto;border-radius:0}
+.ss-st.frz{color:var(--muted)}.ss-st.frz::before{display:none}
+.ss-frz{display:inline-flex;align-items:center;gap:.35rem;font-size:max(14px,.875rem);font-weight:700;color:var(--muted);border:1px dashed var(--line2);border-radius:999px;padding:.05rem .55rem;white-space:nowrap}
+.ss-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.55rem 1.2rem;margin:0}
+.ss-dl dt{color:var(--muted)}.ss-dl dd{margin:0;display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap}
+.ss-card{position:sticky;top:5.5rem;border:1px solid var(--line2);border-radius:var(--r-card,14px);background:var(--panel);padding:1.1rem 1.15rem}
+.ss-card h3{font:600 1.35rem var(--display);margin:0 0 .4rem}
+.ss-card p{margin:0 0 .8rem}.ss-card p b{color:var(--text)}
+.ss-sum{list-style:none;margin:0 0 1rem;padding:0;display:flex;flex-direction:column;gap:.45rem}
+.ss-sum li{display:flex;justify-content:space-between;gap:.6rem;align-items:center}
+.ss-go{width:100%;min-height:56px;font-size:1.15rem}
+.ss-go[aria-disabled=true]{background:none;color:var(--muted);border:1px dashed var(--line2);opacity:1}
+.ss-solo{text-align:center;margin:.8rem 0 0}
+.ss-ul{margin:.3rem 0 .8rem;padding-left:1.2rem;color:var(--text)}.ss-ul li{margin:.25rem 0}
+/* a player */
+.ss-p{max-width:60rem}
+.ss-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:.8rem}
+.ss-pick{display:flex;flex-direction:column;align-items:flex-start;gap:.3rem;text-align:left;min-height:96px;padding:1rem 1.1rem;border-radius:var(--r-card,14px)}
+.ss-pick b{font:600 1.35rem var(--display)}
+.ss-pick.off{opacity:1;cursor:not-allowed}.ss-pick.off b{color:var(--muted)}
+.ss-pick.new{align-items:center;justify-content:center;border-style:dashed}.ss-pick.new b{font:700 1.05rem var(--body)}
+.ss-wait{display:flex;align-items:center;gap:1rem;border:1px solid color-mix(in srgb,var(--warn) 55%,var(--line2));border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) calc(var(--tint,9%) * .7),var(--panel));border-radius:var(--r-card,14px);padding:1rem 1.2rem;margin-bottom:1rem}
+.ss-wait>span:last-child{display:flex;flex-direction:column;gap:.15rem}.ss-wait b{font-size:1.2rem}
+.ss-ring{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 3px var(--warn);flex:none}
+.ss-p .ss-box{margin-bottom:1rem}.ss-p .ss-box .row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
+.ss-you{font:700 max(14px,.85rem) var(--body);background:var(--panel2);border-radius:999px;padding:.05rem .5rem;margin-left:.3rem}
+/* out of the session: the banner over a read-only sheet, the party tile, the journey row */
+.ss-out{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;border:1px dashed var(--line2);border-radius:var(--r-card,14px);background:var(--panel);padding:1rem 1.2rem;margin:0 0 1rem}
+.ss-out>svg{color:var(--muted);flex:none}
+.ss-out>span{flex:1;min-width:14rem;display:flex;flex-direction:column;gap:.2rem}.ss-out>span b{font-size:1.15rem}
+body.ses-ro #main .page>[inert]{opacity:.55;filter:saturate(.35)}
+.ptile.frozen,.jr-li.frz{background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--text) 5%,transparent) 10px 20px)}
+.ptile.frozen .pname,.ptile.frozen .pt-n{color:var(--muted)!important}
+.ptile.frozen .hp{opacity:.4}.ptile.frozen .pt-flags{display:none}
+.ptile.frozen .pt-top{flex-wrap:wrap;gap:.4rem}
+.ptile .pt-let{margin-top:.4rem}
+.jr-li.frz .jr-who{color:var(--muted)}
+.ss-asks .btn{margin-left:.3rem}
+.wsmenu .mrow.frz b{color:var(--muted)}
+@media (max-width:1000px){.ss-grid{grid-template-columns:minmax(0,1fr)}.ss-card{position:static}}
+@media (max-width:640px){.ss-row{flex-wrap:wrap}.ss-stw{align-items:flex-start;text-align:left;width:100%;padding-left:calc(48px + .9rem)}}
+/* part 3: device labels, the Ref's own seats, the suggested crow, Import a crow */
+.ss-wl{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .4rem}
+.ss-dn{font:700 max(14px,.95rem) var(--body);color:var(--muted)}
+.ss-dot{color:var(--muted)}
+.ss-row.local .ss-av{border-style:solid;border-color:var(--good)}
+.ss-stw .btn{margin-top:.15rem}
+.ss-sug{margin-bottom:1rem}
+.crowfile{position:relative;cursor:pointer}
+.crowfile input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.crowfile:focus-within{outline:2px solid var(--sel);outline-offset:2px}
+.ss-pick.crowfile{align-items:center;justify-content:center;text-align:center;border-style:dashed}
+.ss-pick.crowfile b{font:700 1.05rem var(--body)}
+.hcard.crowfile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;text-align:center}
+.hcard.crowfile b{font-weight:700}
+/* a dead crow in the list (owner, 2026-11-23): dashed and quiet like the starter's Dead token, the word and a skull beside the level */
+.hcard.dead{border-style:dashed;background:none}
+.hcard.dead h3{color:var(--muted);text-decoration:line-through}
+.hcard.dead .hstats{opacity:.7}
+.hc-dead{display:inline-flex;align-items:center;gap:.3rem;font-weight:700;color:var(--text)}
+.btn.crowfile{display:inline-flex;flex-direction:column;gap:0}.btn.crowfile .muted{display:none}
+/* ---------- round 2 (owner, 2026-11-20): portraits, the lean starter (variant C on a 12-column grid), the lean picker ---------- */
+.cav{--av:48px;width:var(--av);height:var(--av);border-radius:50%;display:inline-grid;place-items:center;flex:none;overflow:hidden;box-sizing:border-box;
+  background:var(--panel2);border:1px solid var(--line2);color:var(--text);font:600 calc(var(--av) * .42)/1 var(--display);vertical-align:middle}
+.cav img{width:100%;height:100%;object-fit:cover;display:block}
+.cav.pic{border-color:var(--line)}
+.cav.dead,.cav.frozen,.cav.away{color:var(--muted)}
+.cav.dead img,.cav.frozen img,.cav.away img{filter:grayscale(1);opacity:.55}
+.cav.away,.cav.frozen{border-style:dashed}
+.cav.dead{border-style:dashed;text-decoration:line-through}
+.mrow.av{display:flex;align-items:center;gap:.7rem}
+.ptile .pname{display:inline-flex;align-items:center;gap:.5rem}
+.jr-who{display:inline-flex;align-items:center;gap:.5rem}
+/* the starter: left column (title, table, place, Start) and the crows, on one grid with one gutter */
+.sl{--g:24px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--g);align-items:stretch;max-width:80rem;margin:0 auto;padding-top:.5rem}
+.sl-left{grid-column:1 / span 5;display:flex;flex-direction:column;gap:var(--g);min-width:0}
+.sl-toks{grid-column:6 / span 7;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(168px,1fr);gap:var(--g)}
+.sl-toks.many{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sl-h{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;min-height:56px}
+.sl-h h2{font:600 2.4rem/1.1 var(--display);margin:0}
+.sl-camp{color:var(--muted);display:inline-flex;gap:.4rem;align-items:baseline}
+.sl-d{color:var(--muted);margin:0 .35rem}
+.sl-code{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:1rem;border:1px solid var(--line2);border-radius:var(--r-card,14px);background:var(--panel);padding:.9rem 1.1rem}
+.sl-lab{grid-column:1 / -1;font:800 max(14px,.8rem) var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sl-k{font:700 clamp(2.4rem,4.2vw,3.6rem)/1.05 var(--body);letter-spacing:.14em}
+.sl-copy{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:var(--r-ctl,10px);background:none;color:var(--text);cursor:pointer}
+.sl-copy:hover{border-color:var(--text)}
+.sl-stop{grid-column:1 / -1;justify-self:start;margin-top:.35rem;min-height:44px}
+.sl-code.off{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center}
+.sl-code.off .sl-lab{flex-basis:100%}
+.sl-place{display:flex;align-items:center;flex-wrap:wrap;margin:0;font-size:max(14px,1rem)}
+.sl-place b{font-weight:700}.sl-pi{color:var(--vil,var(--good));display:inline-flex;margin-right:.5rem}
+.sl-go{margin-top:auto;width:100%;min-height:60px;font-size:1.2rem}
+.sl-go[disabled]{background:none;border:1px dashed var(--line2);color:var(--muted);opacity:1}
+.ss-tok{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45rem;text-align:center;
+  border:1px solid var(--line2);border-radius:var(--r-card,14px);background:var(--panel);padding:1rem .8rem;min-width:0}
+.ss-tok.away,.ss-tok.dead{border-style:dashed;background:none}
+.ss-tok.empty{grid-column:1 / -1}
+.ss-avw{position:relative;display:inline-block}
+.ss-tok.ready .cav{box-shadow:0 0 0 2px var(--good)}
+.ss-tok.choosing .cav{border:2px dashed var(--warn)}
+.ss-mark{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--panel)}
+.ss-mark.good{background:var(--good);color:#0d1a0b}
+.ss-mark.warn{background:var(--panel);color:var(--warn);border-color:var(--warn)}
+.ss-mark.away,.ss-mark.dead{background:var(--panel2);color:var(--muted);border-color:var(--line2)}
+.ss-tn{font:600 1.3rem/1.2 var(--display);overflow-wrap:anywhere}
+.ss-tok.away .ss-tn,.ss-tok.dead .ss-tn{color:var(--muted)}
+.ss-tok.dead .ss-tn{text-decoration:line-through}
+.ss-tok .ss-st::before{display:none}
+.ss-tok .ss-st.away,.ss-tok .ss-st.dead{color:var(--muted)}
+.ss-dev{position:absolute;top:.5rem;right:.5rem;width:44px;height:44px;display:grid;place-items:center;border:1px solid transparent;border-radius:var(--r-ctl,10px);background:none;color:var(--muted);cursor:pointer}
+.ss-dev:hover{border-color:var(--line2);color:var(--text)}
+.ss-dev[aria-pressed=true]{border-color:var(--good);color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.sl-confirm .sl-out{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;color:var(--text);font:600 1.15rem var(--display)}
+.sl-confirm .sl-out span{display:inline-flex;align-items:center;gap:.35rem}
+@media (max-width:1000px){
+  .sl{grid-template-columns:minmax(0,1fr);row-gap:var(--g)}
+  .sl-left,.sl-toks,.sl-toks.many{grid-column:1 / -1}
+  .sl-toks.many{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sl-go{margin-top:0}}
+/* a player: who do you play, waiting */
+.sp{max-width:46rem;margin:0 auto;padding-top:.5rem;display:flex;flex-direction:column;gap:1rem}
+.sp-h{font:600 2.2rem/1.15 var(--display);margin:0}
+.sp-big{display:flex;align-items:center;gap:1.2rem;width:100%;text-align:left;border:0;border-radius:var(--r-card,14px);background:var(--accent);color:var(--accent-ink);padding:1.1rem 1.4rem;min-height:104px;cursor:pointer;font:inherit}
+.sp-big b{flex:1;font:600 2rem/1.15 var(--display)}
+.sp-big .cav{border-color:currentColor;border-width:2px;background:none;color:inherit}
+.sp-toks{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.8rem}
+.sp-tok{display:flex;align-items:center;gap:.8rem;text-align:left;border:1px solid var(--line2);border-radius:var(--r-card,14px);background:var(--panel);color:var(--text);padding:.7rem 1rem;min-height:72px;cursor:pointer;font:inherit}
+.sp-tok b{font:600 1.25rem var(--display)}
+.sp-tok>span:not(.cav){display:flex;flex-direction:column}
+.sp-tok.off{cursor:not-allowed;background:none}.sp-tok.off b{color:var(--muted)}
+.sp-new{display:flex;gap:.8rem;flex-wrap:wrap}
+.sp-q{position:relative;display:inline-flex;align-items:center;gap:.5rem;min-height:48px;padding:0 1rem;border:1px dashed var(--line2);border-radius:var(--r-ctl,10px);background:none;color:var(--text);font:700 1rem var(--body);cursor:pointer}
+.sp-q:hover{border-color:var(--text)}
+.sp-wait{display:flex;align-items:center;gap:.8rem;margin:0;font-size:1.35rem}
+.sp-card{display:flex;align-items:center;gap:1.1rem;border:1px solid var(--line2);border-radius:var(--r-card,14px);background:var(--panel);padding:1rem 1.3rem}
+.sp-card b{flex:1;font:600 1.8rem var(--display)}
+.sp-card .cav{box-shadow:0 0 0 2px var(--good)}
+/* the builder's portrait field and the crop dialog */
+.picf{display:flex;align-items:center;gap:1rem;margin:0 0 1rem}
+.picf-a{display:flex;flex-direction:column;gap:.25rem}
+.picfile{position:relative;cursor:pointer}.picfile input{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
+.picfile:focus-within{outline:2px solid var(--sel);outline-offset:2px}
+.piccrop canvas{display:block;margin:.5rem auto;border-radius:12px;touch-action:none;cursor:grab;background:#111}
+.piccrop canvas:focus-visible{outline:2px solid var(--sel);outline-offset:3px}
+.cav[data-i]::before{content:attr(data-i)}
+/* “or play on this device”: the Ref ticks the crows of this device that play (owner, 2026-11-21); pressed = a green edge and ✓ */
+#dlg .ss-solo{max-width:44rem}
+.ss-solo .sp-toks{margin:.4rem 0 1rem}
+.ss-solo .sp-tok[aria-pressed=true]{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+.ss-solo .sp-tok[aria-pressed=true] b::after{content:" ✓";color:var(--good)}

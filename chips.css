@@ -1,0 +1,29 @@
+/* Choice + description in one block (chips.js chipBox; owner-approved 2026-11-21). One container: the chips, a thin rule, the
+   chosen option's text. The selection is a ring (a 2px border and a 2px ring in --sel), never a bone fill: bone stays the one
+   primary action. A disabled chip is dashed and keeps readable text. Shared tokens only; 44px targets; text ≥ 14px. */
+.cd-box{margin:0;padding:12px;border:1px solid var(--line2);border-radius:12px;background:var(--panel);min-width:0}
+.cd-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cd-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:0;padding:0 12px;border:1px solid var(--line2);border-radius:10px;
+  background:var(--panel);color:var(--text);font:700 max(14px,.85rem)/1.2 var(--body);text-align:left;cursor:pointer}
+.cd-chip:hover{border-color:var(--text)}
+.cd-chip[aria-pressed=true],.cd-chip[aria-checked=true],.cd-chip[aria-selected=true]{background:var(--panel2);border:2px solid var(--sel);padding:0 11px;box-shadow:0 0 0 2px var(--sel)}
+.cd-chip:focus-visible{outline:3px solid var(--sel);outline-offset:4px}
+.cd-chip[disabled]{border-style:dashed;color:var(--muted);background:none;cursor:not-allowed}
+.cd-chip[disabled]:hover{border-color:var(--line2)}
+.cd-chip .cd-why{font-weight:400;font-size:max(14px,.78rem);color:var(--muted)}
+.cd-chip .n{font:800 max(14px,.75rem)/1 var(--body);border-radius:999px;padding:3px 6px;background:color-mix(in srgb,currentColor 16%,transparent)}
+.cd-desc{margin:10px 0 0;padding:10px 0 0;border-top:1px solid var(--line);font-size:max(14px,.88rem);line-height:1.45;color:var(--text)}
+.cd-desc p{margin:0}
+.cd-desc p+p,.cd-desc p+div,.cd-desc div+p{margin-top:8px}
+.cd-desc .cd-name{font-weight:700;margin-right:2px}
+.cd-desc .muted{color:var(--muted)}
+.cd-tag{display:inline-block;font-size:max(14px,.8rem);color:var(--muted)}
+.cd-tag b{color:var(--text)}
+/* a follow-up question inside the description (a dungeon: closed off from the Miasma?) */
+.cd-q{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:10px}
+.cd-q>span{font-size:max(14px,.88rem);margin-right:2px}
+/* a nested block (the role's tasks inside the role's text) and its small label */
+.cd-box.cd-inner{background:var(--panel2);border-color:var(--line);padding:10px;margin-top:8px}
+.cd-inner .cd-chip,.cd-inner .cd-chip[aria-pressed=true]{background:var(--panel)}
+.cd-inner .cd-chip[disabled]{background:none}
+.cd-lbl{display:block;margin:0 0 6px;font:800 max(14px,.72rem)/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}

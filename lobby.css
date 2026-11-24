@@ -1,0 +1,89 @@
+/* CROW NEST — before the game (lobby.js; owner, 2026-11-24). One frame for every screen before a session starts: the builder's
+   step header (.b2-steps), the title in one place, Home's rows (.hmenu), the actions right under the content (quiet left, main
+   right; owner, 2026-11-24: no band at the bottom, the status line stays). Four sizes: 28 the title · 20 a row's name, the main button · 18 body · 14 labels and quiet lines. 8 px steps. */
+.lob{flex:1;width:100%;max-width:44rem;margin:0 auto;display:grid;gap:24px;align-content:start;padding-top:8px}
+.lob .b2-steps{margin:0}
+.lob-rail .b2-step{cursor:default}.lob-rail .b2-step:hover{color:var(--muted)}.lob-rail .b2-step[aria-current=step]:hover,.lob-rail .b2-step.ok:hover{color:var(--text)}
+.lob-h{display:grid;gap:4px}
+.lob-h h2{margin:0;font:700 28px/1.15 var(--display)}
+.lob-h p{margin:0;color:var(--muted);font-size:14px}
+.lob-sec{display:grid;gap:8px}
+.lob-sec>h3{margin:0;font:800 14px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+/* rows: Home's .hmenu; a row that only says something is a div */
+.lob .hmenu{margin:0}
+.lob .hmenu>button,.lob .hmenu>.lrow{display:flex;align-items:center;gap:16px;width:100%;min-height:64px;padding:12px 16px;text-align:left}
+.lob .hmenu>.lrow{border-top:1px solid color-mix(in srgb,var(--line) 80%,transparent)}
+.lob .hmenu>.lrow:first-child{border-top:0}
+.lob .hmenu>*>span.tx{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.lob .hmenu b{font-size:20px;font-weight:600}
+.lob .hmenu .tx>span{font-size:14px;color:var(--muted)}
+.lob .hmenu svg.ic{width:24px;height:24px;flex:none;color:var(--muted)}
+.lob .hmenu button[aria-disabled=true]{opacity:.6}
+/* a crow's disc in a row: Home's row rule (.hmenu button>span: a flex column) beat the disc's grid, and the initial sat top-left */
+.hmenu button>.cav,.hmenu .lrow>.cav{flex:none;display:inline-grid;place-items:center}
+.lob .ss-st{font-size:14px;white-space:nowrap}
+.lob .ss-st svg{flex:none}
+.lob .ss-st.dead::before{content:none}
+.lob .ss-st.away{color:var(--muted)}.lob .ss-st.away::before{background:none;box-shadow:inset 0 0 0 1.5px currentColor}
+.lob .hmenu .lob-here{flex:none;width:auto;display:inline-flex;align-items:center;min-height:40px;padding:0 12px;margin-right:8px;border:1px solid var(--line2);border-radius:10px;font-size:14px;font-weight:700}
+.lob .hmenu .lob-here[aria-pressed=true]{border-color:var(--text)}
+/* a pick: the row stays pressed, a tick at the right */
+.lob .hmenu button[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--text);background:color-mix(in srgb,var(--text) 6%,transparent)}
+.lob-ok{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--text);color:var(--bg,#111);flex:none}
+/* content that is not a list (the table code, an empty list): the rows' surface, one block */
+.lob-card{background:var(--panel2);border:1px solid color-mix(in srgb,var(--line) 85%,transparent);border-radius:var(--r);padding:12px 16px;min-height:64px;display:flex;align-items:center}
+.lob-muted{margin:0;color:var(--muted);font-size:14px}
+/* the code field: its label above, nothing written inside until the player types or pastes */
+.lob-field{position:relative;display:block}
+/* the player's code card: the field and Join beside it in one card across the column, the label above as a section's
+   (owner, 2026-11-24: a card for the half-empty line; variant 2 with the label of variant 3) */
+.lob-card.lob-codebox{display:grid;gap:8px}
+.lob-coderow{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center}
+/* the Ref's card: the code as text in the field's type, not a box (it cannot be changed); the second way on is a link */
+.lob-k{font:700 28px/1 var(--num);letter-spacing:.2em;padding:0 4px;margin-right:8px}
+.lob-coderow .linkbtn{min-height:44px}
+/* codes are 5 characters (sync.js): the field fits 6 and the spinner, not the column (owner, 2026-11-24) */
+.lob-coderow .lob-field{flex:none}
+.lob-coderow .lob-field input{width:calc(6 * (1ch + .2em) + 64px)}
+.lob-coderow .btn{min-height:56px;min-width:10rem;padding:0 24px;gap:10px;font-size:1.05rem;justify-content:center}
+.lob-coderow .btn[disabled]{background:none;border:1px dashed var(--line2);color:var(--muted);opacity:1}
+.lob-field input{width:100%;font:700 28px/1 var(--num);letter-spacing:.2em;text-transform:uppercase;min-height:56px;padding:0 48px 0 16px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--text)}
+.lob-field input:disabled{opacity:1;color:var(--muted)}
+.lob-field.err input{border:2px solid var(--harm)}
+.lob-err{margin:0;color:var(--harm);font-weight:700;font-size:14px}
+.lob-err::before{content:"! "}
+.lob-spin{position:absolute;right:16px;top:50%;width:22px;height:22px;margin-top:-11px;border:3px solid var(--line2);border-top-color:var(--text);border-radius:50%;animation:lob-spin 1s linear infinite}
+@keyframes lob-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.lob-spin{animation:none}}
+/* the crows fold under one button; the two actions of another kind sit apart, dashed (the seat screen's .sp-q) */
+.lob-disc{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:0 16px;border:1px solid color-mix(in srgb,var(--line) 85%,transparent);border-radius:var(--r);background:var(--panel2);color:var(--text);font:600 18px/1.2 var(--body);text-align:left;cursor:pointer}
+.lob-disc .n{color:var(--muted);font-weight:700}
+.lob-disc svg{margin-left:auto;width:22px;height:22px;color:var(--muted)}
+.lob-acts{display:flex;flex-wrap:wrap;gap:16px}
+.lob-acts .sp-q{min-height:48px;font-size:18px}
+/* the end of a session on a player's Home: a done line (green = done, and the words say it) */
+.lob-over{box-shadow:inset 4px 0 0 var(--good)}
+.lob-over .tx{display:grid;gap:2px}.lob-over b{font:700 20px/1.2 var(--display)}.lob-over .tx span{color:var(--muted);font-size:14px}
+.lob .hrole-sw button{font-size:18px}
+.lob .who{margin:0}
+/* the actions: one row under the content, the builder's button sizes */
+.lob-foot{display:flex;align-items:center;gap:16px;padding-top:8px}
+.lob-foot .btn{min-height:52px;min-width:12rem;padding:0 24px;gap:10px;font-size:1.05rem;justify-content:center}
+.lob-foot .btn[disabled]{background:none;border:1px dashed var(--line2);color:var(--muted);opacity:1}
+.lob-file{position:relative;cursor:pointer}
+.lob-file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+/* the bar's way back to the campaign on a prepared thing (app.js renderBody) */
+#views .lob-back{font-weight:700}
+#views .lob-back span[aria-hidden]{font-size:20px;margin-right:4px}
+/* a row's tick and state hold their own width (Home's row rule stretches every span in a row) */
+.lob .hmenu button>span:not(.tx){flex:none}
+.lob .hmenu button>.lob-ok{display:grid}
+.lob .hmenu button>.ss-st{display:inline-flex}
+/* prep: the Places screen without the live door (Set out belongs to the game) */
+:root.prep .banner.scdoor{display:none}
+/* the book: a crow off a table is to read; the controls that play it go (Take damage, Effort, conditions, Cruelty, wounds, XP) */
+:root.book :is([data-action=wmode],[data-action=comp-wmode],[data-action=hud-dmg],[data-action=effort],[data-action=cond-open],[data-action=cruelty],[data-action=wound-type],[data-action=xp-add],[data-action=xp-fix],[data-action=lore-spend]){display:none!important}
+:root.book .ps-wf,:root.book .ps-cr0{display:none!important}
+/* the book: no conditions in force, no Conditions row (a word with nothing to tap or read) */
+:root.book .conds:not(:has(.chip.on)){display:none}
+:root.book .conds .chip.on{pointer-events:none}

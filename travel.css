@@ -1,0 +1,174 @@
+/* CROW NEST — the travel day without a map (travel.js; owner, 2026-11-23; mock-ups QA/design/travel-nomap, review page GbkPw5).
+   One screen at 16:9 without scrolling (1366×657 and 1920×969): the step beside the day's numbers and the party. 8 px scale; one
+   bone fill per screen, none while nothing waits on the Ref; colour by role (visual.css): the scene's sky for “now”, sulphur for
+   waiting, blood for harm, green for done — each with a word or a mark too. */
+.tv{max-width:96rem;margin:0 auto;padding:12px 24px 0;display:grid;gap:12px}
+.tv-head{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:0 0 8px;border-bottom:1px solid var(--line)}
+.tv-rail{display:flex;gap:4px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+.tv-rail li{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 12px 0 6px;border-radius:999px;color:var(--muted);font-weight:700;font-size:max(14px,.95rem)}
+.tv-rail li i{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1.5px dashed var(--line2);font:700 .85rem/1 var(--num);font-style:normal}
+.tv-rail li.done{color:var(--text)}
+.tv-rail li.done i{border:0;background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.tv-rail li.done i::before{content:"✓"}
+.tv-rail li.cur{color:var(--text);box-shadow:inset 0 0 0 2px var(--scene)}
+.tv-rail li.cur i{border:2px solid var(--scene);color:var(--scene)}
+.tv-season{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--muted);font-size:max(14px,.9rem)}
+.tv-season .cd-chip{min-height:44px}
+.tv-grid{display:grid;grid-template-columns:minmax(0,1fr) 24rem;gap:16px;align-items:start}
+.tv-main,.tv-side{display:grid;gap:12px;min-width:0}
+.tv-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;display:grid;gap:12px;min-width:0}
+.tv-card h3{margin:0;font:700 1.05rem var(--display);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tv h3 small,.tv-note{font:400 max(14px,.85rem) var(--body);color:var(--muted)}
+.tv-note{margin:0}
+/* the day's numbers: one row of four */
+.tv-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tv-kpi{border:1px solid var(--line2);border-radius:10px;padding:6px 10px;display:grid}
+.tv-kpi small{font-size:max(14px,.8rem);line-height:1.3;color:var(--muted)}
+.tv-kpi b{font:700 1.45rem/1.15 var(--num);font-variant-numeric:lining-nums tabular-nums}
+.tv-kpi b q{quotes:none;color:var(--warn);font-size:1rem;margin-left:4px}
+.tv-kpi.big b{color:var(--scene)}
+/* the party: one line a traveller, a hireling under their crow; what it waits for at the right */
+.tv-board{display:grid}
+.tv-row{display:grid;grid-template-columns:32px minmax(6rem,9.5rem) minmax(0,1fr) auto;gap:4px 12px;align-items:center;min-height:52px;padding:4px 0;border-top:1px solid var(--line)}
+.tv-row.hire{padding-left:24px;grid-template-columns:28px minmax(6rem,9.5rem) minmax(0,1fr) auto}
+.tv-row.side{grid-template-columns:28px minmax(0,1fr) auto}
+.tv-row .nm{display:grid;line-height:1.2;min-width:0}
+.tv-row .nm b{font-size:1rem}
+.tv-row .nm span,.tv-row .what .muted{font-size:max(14px,.85rem);color:var(--muted)}
+.tv-row .what{font-size:max(14px,.95rem);min-width:0}
+.tv-row .st{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.tv-row .dq-tiers{display:flex;gap:4px;flex-wrap:nowrap}
+.tv-row .dq-tiers .btn{min-height:44px;padding:0 12px}
+.tv-row .dq-pill{min-height:32px}
+.tv-row .act{grid-column:2/-1;display:flex;gap:8px;flex-wrap:wrap}
+.tv-row .act .btn{min-height:40px}
+.tv-av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1px dashed var(--line2);color:var(--muted);font:700 .8rem var(--num)}
+.tv-mi{color:var(--harm);font-weight:700}
+.tv-mi::before{content:"✕ "}
+.tv-acts{display:flex;gap:8px 16px;align-items:center;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)}
+.tv-acts .btn.primary{min-height:48px;padding:0 24px;font-size:1.05rem}
+.tv-acts .grow{flex:1}
+.tv-acts .btn[disabled]{border-style:dashed;color:var(--muted);background:none}
+/* the side: the way the players showed, the pace their votes made */
+.tv-sec{display:grid;gap:8px}
+.tv-sec h4{margin:0;font-size:max(14px,.9rem);color:var(--muted);font-weight:700;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tv .cd-box.flat{padding:0;border:0;background:none}
+.tv .cd-chip{min-height:44px;padding:0 10px}
+.tv .cd-chip[aria-pressed=true]{padding:0 9px}
+.tv-pace{margin:0;display:flex;align-items:baseline;gap:8px 12px;flex-wrap:wrap}
+.tv-pace b{font:700 1.3rem var(--display)}
+.tv-tie{border:1px solid var(--warn);border-radius:10px;padding:10px 12px;display:grid;gap:8px;background:color-mix(in srgb,var(--warn) 7%,transparent)}
+.tv-tie h4{color:var(--warn);margin:0}
+.tv-tie h4::before{content:"◷ "}
+.tv .jr-votes{display:inline-flex;gap:3px;margin-left:4px}
+/* the road: the day's hexes beside the walk; the party's marker in its own row above them (the strip scrolls sideways) */
+.tv-road{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:center}
+.tv-road>.full{grid-column:1/-1;display:grid;gap:12px}
+.tv-roadh{margin:0 0 4px;display:flex;gap:8px 12px;align-items:baseline;flex-wrap:wrap}
+.tv-roadh b{font:700 1.15rem var(--display)}
+.tv-strip{display:grid;grid-auto-flow:column;grid-template-columns:max-content;grid-auto-columns:minmax(52px,68px);align-items:start;gap:2px;overflow-x:auto;padding:0}
+.tv-hx{position:relative;min-width:0;display:grid;justify-items:center;gap:6px;padding-top:28px;color:var(--muted);text-align:center}
+.tv-hx svg{display:block;width:100%;max-width:60px;height:auto;aspect-ratio:84/96;overflow:visible}
+.tv-hx svg polygon{fill:var(--panel2);stroke:var(--line2);stroke-width:2;stroke-dasharray:6 5}
+.tv-hx svg text{font:700 24px var(--num);fill:currentColor;text-anchor:middle;dominant-baseline:central}
+.tv-hx .cap{font-size:max(14px,.8rem);font-weight:700;line-height:1.25;min-height:2.5em}
+.tv-hx .here{position:absolute;top:0;left:50%;transform:translateX(-50%);padding:2px 10px;border-radius:999px;background:var(--scene);color:#0d1620;font-weight:800;font-size:max(14px,.8rem);line-height:1.25;white-space:nowrap}
+.tv-hx .here::after{content:"";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);border:5px solid transparent;border-bottom:0;border-top-color:var(--scene)}
+:root[data-theme=light] .tv-hx .here{color:#fff}
+.tv-hx.start svg polygon{stroke-dasharray:none;fill:transparent}
+.tv-hx.done{color:var(--text)}
+.tv-hx.done svg polygon{stroke-dasharray:none;fill:color-mix(in srgb,var(--good) 10%,var(--panel2));stroke:color-mix(in srgb,var(--good) 55%,transparent)}
+.tv-hx.cur{color:var(--text)}
+.tv-hx.cur svg polygon{stroke-dasharray:none;stroke:var(--scene);stroke-width:4;fill:color-mix(in srgb,var(--scene) 16%,var(--panel2))}
+.tv-hx.ev svg polygon{stroke:var(--warn);stroke-dasharray:none;stroke-width:3}
+.tv-hx.ev .cap{color:var(--warn)}
+.tv-hx.ev .cap::before{content:"◷ "}
+.tv-hx.now{border:0;padding:28px 0 0;margin:0} /* the shell's own .now (a section rule) must not reach the strip */
+.tv-hx.now svg polygon{stroke:var(--harm);stroke-dasharray:none;stroke-width:4;fill:color-mix(in srgb,var(--harm) 14%,var(--panel2))}
+.tv-hx.now .cap{color:var(--harm)}
+.tv-hx.now .cap::before{content:"! "}
+.tv-hx.camp .cap::before{content:"☾ "}
+.tv-hx.dir svg text{font-size:40px}
+.tv-walk{display:grid;gap:8px;justify-items:stretch;min-width:14rem}
+.tv-walk .btn{min-height:44px}
+.tv-walk .btn.primary{min-height:52px;font-size:1.05rem}
+.tv-lost{display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap;margin:0 0 4px}
+.tv-lost .tag{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--harm) 70%,transparent);color:var(--harm);font-weight:800;font-size:max(14px,.85rem)}
+.tv-lost .tag::before{content:"?"}
+.tv .st-enc{margin:0}
+/* the context an encounter's table needs: chips, the last answer pressed */
+.tv-ctx{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:8px 0 0;padding:8px 12px;border:1px solid var(--line2);border-radius:10px;background:var(--panel)}
+.tv-ctx-h{margin:0;font-weight:700;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.tv-lost{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tv-lost .cd-chip{min-height:44px}
+/* the old panels (camp, the Ref's asks) inside a card keep their own sections; tighter */
+.tv .hxsec+.hxsec{padding-top:12px}
+@media (max-width:1100px){.tv-grid{grid-template-columns:minmax(0,1fr) 20rem}}
+@media (max-width:1023px){.tv{padding:12px 16px 0}.tv-grid,.tv-road{grid-template-columns:1fr}.tv-season{margin-left:0}}
+/* an encounter at 16:9: two columns in the card — what it is, its land and roll and acts on the left; what it is doing and what
+   the players are told on the right — so the road, the card and the day's numbers stay on one screen */
+@media (min-width:1024px){
+  .tv .st-enc{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);grid-auto-flow:row dense;gap:8px 16px;align-items:start}
+  .tv.stop .tv-grid{grid-template-columns:minmax(0,1fr) 20rem} /* a stop on the road: the card takes the room, the day's numbers and hexes narrow */
+  .tv .st-enc>*{grid-column:1;margin:0}
+  .tv .st-enc>.st-ench{grid-column:1/-1}
+  .tv .st-enc>.jr-att{grid-column:2;grid-row:2/span 4} /* a short span: the empty rows of a longer one still add their gaps */
+  .tv .st-enc>.jr-say{grid-column:1}
+  .tv .st-enc>.tv-ctx{grid-column:1/-1;grid-row:2;margin:0}
+  .tv .st-enc:has(>.tv-ctx)>.jr-att{grid-row:3/span 4}
+  /* Nearby Monster's family question across the card, as the land's: its chips in one row */
+  .tv .st-enc>.jr-near{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+  .tv .st-enc>.jr-near>*{margin:0!important}
+  .tv .st-enc:has(>.jr-near)>.jr-att{grid-row:3/span 4}
+}
+/* the table's own reminder under the attitude stays in Rules: the card keeps the roll, the line and the choice */
+.tv .jr-att>p.small.muted{display:none}
+.tv .jr-att .jr-row{flex-wrap:nowrap}
+/* the line's own dice and the Reroll share one row: the longest attitudes stay on the screen */
+.tv .jr-att{display:flex;flex-wrap:wrap;align-items:center;gap:0 12px}
+.tv .jr-att>.jr-att-h,.tv .jr-att>.jr-att-t{flex:1 0 100%}
+.tv .jr-att>.jr-dice{margin:0;flex:0 1 auto}
+.tv .jr-att>.jr-row:not(.jr-dice){flex:1 1 14rem;min-width:0} /* a short basis: a rolled 10 beside it must not push it to a row of its own */
+.tv .jr-att .jr-sel{min-width:0} /* a select keeps its longest option as its width unless told */
+.tv .jr-att .jr-sel{max-width:11rem}
+.tv .jr-att-t{font-size:max(14px,.94rem);line-height:1.45}
+/* the player's Journey: one question open, the answered ones folded into lines above it, each with Change */
+.tvp{max-width:64rem;margin:0 auto;padding:12px 16px 0;display:grid;gap:8px}
+.tvp-lines{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tvp-lines>.tvp-done{flex:1 1 15rem}
+.tvp-lines>.jr-me{margin:0;flex:0 0 auto}
+.tvp-done{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;min-height:52px;padding:8px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.tvp-done .tick{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good);font-weight:800}
+.tvp-done .k{display:block;color:var(--muted);font-size:max(14px,.85rem)}
+.tvp-done .v{display:block;font-weight:700}
+.tvp-next{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:12px;min-height:52px;padding:8px 16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
+.tvp-next i{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1.5px dashed var(--line2);font:700 .9rem/1 var(--num);font-style:normal}
+.tvp-cur{border:2px solid var(--scene);border-radius:14px;background:var(--panel);padding:12px 16px;display:grid;gap:12px;min-width:0}
+.tvp-cur.ready{border:1px solid var(--line)}
+.tvp-q{margin:0;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;font:700 1.15rem/1.2 var(--display)}
+.tvp-q small{font:400 max(14px,.9rem) var(--body);color:var(--muted)}
+.tvp-q .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;border:2px solid var(--scene);color:var(--scene);font:700 .95rem/1 var(--num);flex:none}
+.tvp-opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tvp-opts .opt{min-height:88px}
+.tvp-wait{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tvp-party{display:flex;gap:8px;flex-wrap:wrap}
+.tvp-party>span{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid var(--line);border-radius:999px;font-size:max(14px,.9rem)}
+.tvp-party em{font-style:normal;color:var(--muted)}
+.tvp-party .ok em{color:var(--good)}
+.tvp-party .wait em{color:var(--warn)}
+.tvp .hxsec+.hxsec{padding-top:12px}
+@media (max-width:640px){.tvp-opts{grid-template-columns:1fr}}
+/* the player's hirelings (hires.js): their step, the day's pay, the tests side by side, the party's debt */
+.hr-ride{margin-top:8px}
+.hr-pay{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.hr-pay .big{font:700 clamp(1.4rem,2.4vw,2rem)/1.1 var(--num)}
+.hr-short{margin:8px 0 0}
+.tvp-acts{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:12px}
+.hr-bad{color:var(--harm)}
+.tvp-tests{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:8px;align-items:start}
+.tvp-tests>.hxsec{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--panel);margin:0}
+.hr-debt{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:16px}
+.hr-debt .msg{display:grid;gap:4px;flex:1 1 20rem}
+/* the camp's rest step (travel.js tvCampSteps): what the rest gives on one line, the steps keep to one screen */
+.tvp-cur.jr-finish .rgains{list-style:none;padding:0;margin:.25rem 0 .5rem;display:flex;flex-wrap:wrap;gap:.15rem 0}
+.tvp-cur.jr-finish .rgains li+li::before{content:'·';margin:0 .5rem;color:var(--muted)}
